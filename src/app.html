@@ -415,8 +415,8 @@ function renderExam(){
   const lastMock=S.mocks&&S.mocks.length?S.mocks[0]:null;
   const lastSub=lastMock?(EX.subjects.find(s=>s.key===lastMock.subject)||{}):null;
   $('#app').innerHTML=`
+  <div class="topbar"><button class="back" onclick="nav('home')">‹ 类目</button><div class="title">${esc(EX.name)}</div><div class="sp"></div></div>
   <div class="exbanner">
-    <button class="eb-back" onclick="nav('home')">‹</button>
     <div class="eb-icon">${EX.icon||'📚'}</div>
     <div class="eb-name">${esc(EX.name)}</div>
     <div class="eb-meta">${(()=>{const dt=EX.examDate?new Date(EX.examDate):null;const d=dt?Math.max(0,Math.ceil((dt-Date.now())/864e5)):null;return d===null?esc(EX.dateLabel||''):`距开考 <b style="font-size:17px">${d===0?'今天':d+' 天'}</b>`;})()}</div>
