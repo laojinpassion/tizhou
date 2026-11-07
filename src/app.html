@@ -78,6 +78,14 @@ body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 system-ui,-app
 .sres-row{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 13px;margin-bottom:8px;cursor:pointer}
 .sres-row .tx{font-size:14.5px;font-weight:600}
 .sres-row .sub{font-size:12px;color:var(--acc);margin-top:2px}
+#splash{position:fixed;inset:0;z-index:99;background:linear-gradient(160deg,#2f6fb2,#0f2b4a);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;cursor:pointer;transition:opacity .45s}
+#splash.hide{opacity:0;pointer-events:none}
+#splash svg{width:120px}
+.sp-name{font-size:36px;font-weight:800;letter-spacing:14px;text-indent:14px;margin-top:12px}
+.sp-slogan{font-size:14px;opacity:.85;margin-top:8px;letter-spacing:2px}
+.sp-tip{font-size:11px;opacity:.5;margin-top:34px}
+#toast{position:fixed;left:50%;bottom:44px;transform:translateX(-50%);background:rgba(28,35,48,.93);color:#fff;border-radius:10px;padding:10px 16px;font-size:13.5px;z-index:98;opacity:0;transition:opacity .3s;pointer-events:none;max-width:82vw;text-align:center}
+#toast.show{opacity:1}
 .footer-note{margin-top:18px;font-size:12.5px;color:var(--mut);line-height:1.7}
 .subject-card{cursor:pointer;position:relative;overflow:hidden}
 .subject-card .go{color:var(--acc);font-weight:700;font-size:14px}
@@ -92,6 +100,17 @@ body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 system-ui,-app
 </style>
 </head>
 <body>
+<div id="splash" onclick="this.classList.add('hide')">
+  <svg viewBox="0 0 64 46" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M14 26 L50 26 L42 36 L22 36 Z"/>
+    <path d="M32 4 L32 24 L16 24 Z"/>
+    <path d="M36 10 L36 24 L48 24 Z"/>
+    <path d="M2 42 q7 -6 14 0 t14 0 t14 0 t14 0"/>
+  </svg>
+  <div class="sp-name">题舟</div>
+  <div class="sp-slogan">题海无涯 · 渡你上岸</div>
+  <div class="sp-tip">轻触任意处进入</div>
+</div>
 <div id="app"></div>
 <script>/*__FIGS__*/</script>
 <script>window.__DATA__ = /*__DATA__*/;</script>
@@ -118,6 +137,50 @@ function initSubjects(){
 }
 initSubjects();
 const EXAMDT=EX.examDate?new Date(EX.examDate):null;
+
+/* 全量考试目录（产品类目宇宙；st: ready=已收录数据包 / soon=筹备中） */
+const CATALOG=[
+ {cat:'🚗 驾驶驾考', exams:[
+   {name:'机动车驾驶考试（科目一/科目四）',icon:'🚦',st:'soon',note:'官方公开题库整理中'}]},
+ {cat:'📊 经济职称', exams:[
+   {name:'中级经济师（工商管理）',icon:'🎓',st:'ready',pack:'jjjs2026'},
+   {name:'中级经济师（人力资源/金融/财税等）',icon:'🎓',st:'soon',note:'公共科目题库可共用，专业科目数据包筹备中'},
+   {name:'初级经济师',icon:'🎓',st:'soon'}]},
+ {cat:'💰 财会金融', exams:[
+   {name:'初级会计职称',icon:'🧾',st:'soon'},
+   {name:'中级会计职称',icon:'🧮',st:'soon'},
+   {name:'注册会计师（CPA）',icon:'📈',st:'soon'},
+   {name:'税务师',icon:'🧰',st:'soon'},
+   {name:'银行/证券/基金从业',icon:'🏦',st:'soon'}]},
+ {cat:'🏗️ 建筑工程', exams:[
+   {name:'一级建造师',icon:'🏗️',st:'soon'},
+   {name:'二级建造师',icon:'🏗️',st:'soon'},
+   {name:'一级造价工程师',icon:'📐',st:'soon'},
+   {name:'监理工程师',icon:'📋',st:'soon'},
+   {name:'注册消防工程师',icon:'🧯',st:'soon'},
+   {name:'注册安全工程师',icon:'🦺',st:'soon'}]},
+ {cat:'👩‍🏫 教师资格', exams:[
+   {name:'教师资格证（小学/中学）',icon:'🏫',st:'soon'},
+   {name:'教师招聘（教招）',icon:'📖',st:'soon'}]},
+ {cat:'🏛️ 公职编制', exams:[
+   {name:'公务员（行测·申论）',icon:'🏛️',st:'soon'},
+   {name:'事业单位联考',icon:'🏢',st:'soon'}]},
+ {cat:'💊 医药健康', exams:[
+   {name:'执业药师（药学/中药）',icon:'💊',st:'soon'},
+   {name:'健康管理师',icon:'🩺',st:'soon'}]},
+ {cat:'💻 计算机软考', exams:[
+   {name:'软考（系统集成/项目管理师等）',icon:'💻',st:'soon'},
+   {name:'计算机等级考试（NCRE）',icon:'⌨️',st:'soon'}]},
+ {cat:'⚖️ 法律', exams:[
+   {name:'法律职业资格（客观题）',icon:'⚖️',st:'soon'}]},
+];
+let _toastT=null;
+function toast(msg){
+  let t=document.getElementById('toast');
+  if(!t){ t=document.createElement('div'); t.id='toast'; document.body.appendChild(t); }
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(_toastT); _toastT=setTimeout(()=>t.classList.remove('show'),2800);
+}
 const QMAP=new Map(); Object.values(SUBJECTS).forEach(s=>s.qs.forEach(q=>QMAP.set(q.id,q)));
 const findQ=id=>QMAP.get(id);
 
@@ -177,39 +240,46 @@ function nav(screen,arg){ ({home:renderHome,exam:renderExam,subject:renderSubjec
 
 function renderHome(){
   const totalQ=EXAMS.reduce((n,e)=>n+e.subjects.reduce((m,s)=>m+((DATA.banks[s.key]||[]).length),0),0);
-  const cats={};
-  EXAMS.forEach((e,i)=>{ const c=e.cat||'其他考试'; (cats[c]=cats[c]||[]).push({e,i}); });
-  const catHTML=Object.keys(cats).map(c=>`
-    <div class="gname">${esc(c)}</div>
-    ${cats[c].map(({e,i})=>{
-      const qn=e.subjects.reduce((m,s)=>m+((DATA.banks[s.key]||[]).length),0);
-      const days=e.examDate?Math.max(0,Math.ceil((new Date(e.examDate)-Date.now())/864e5)):null;
-      return `<div class="card subject-card" onclick="openExam(${i})">
-        <div class="h2">${e.icon||'📚'} ${esc(e.name)}</div>
-        <div class="mut">${e.subjects.map(s=>`${esc(s.short||s.name)} ${(DATA.banks[s.key]||[]).length}题`).join(' · ')} · 共 ${qn} 题</div>
-        <div class="mut small" style="margin-top:4px">${days!==null?`距开考 ${days===0?'今天 🔥':days+' 天'} · `:''}点击进入科目 ›</div>
+  const catHTML=CATALOG.map(c=>{
+    const rows=c.exams.map(x=>{
+      if(x.st==='ready'&&EXAMS.some(e=>e.id===x.pack)){
+        const ei=EXAMS.findIndex(e=>e.id===x.pack), e=EXAMS[ei];
+        const qn=e.subjects.reduce((m,s)=>m+((DATA.banks[s.key]||[]).length),0);
+        const days=e.examDate?Math.max(0,Math.ceil((new Date(e.examDate)-Date.now())/864e5)):null;
+        return `<div class="card subject-card" onclick="openExam(${ei})">
+          <div class="h2">${e.icon||'📚'} ${esc(e.name)} <span class="badge" style="background:var(--okbg);color:var(--ok)">可刷</span></div>
+          <div class="mut">${e.subjects.map(s=>`${esc(s.short||s.name)} ${(DATA.banks[s.key]||[]).length}题`).join(' · ')} · 共 ${qn} 题</div>
+          <div class="mut small" style="margin-top:4px">${days!==null?`距开考 ${days===0?'今天 🔥':days+' 天'} · `:''}点击进入科目 ›</div>
+        </div>`;
+      }
+      const note=x.note?`（${esc(x.note)}）`:'';
+      return `<div class="chap" onclick="toast('「${esc(x.name)}」数据包筹备中${note} — 到 GitHub 提需求可加速上线')">
+        <div class="nm" style="color:var(--mut)">${x.icon||'📘'} ${esc(x.name)}</div>
+        <div class="st"><span class="badge" style="background:#f0f2f6;color:var(--mut)">筹备中</span></div>
       </div>`;
-    }).join('')}`).join('');
+    }).join('');
+    return `<div class="gname">${esc(c.cat)}</div>${rows}`;
+  }).join('');
   $('#app').innerHTML=`
-  <div class="hero">
-    <svg viewBox="0 0 64 46" class="hero-svg" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+  <div class="topbar"><div class="title" style="text-align:left;font-weight:800;letter-spacing:2px">题舟 TiZhou</div><button class="back" style="width:auto" onclick="nav('settings')">⚙ 设置</button></div>
+  <div class="hero" style="padding:20px 18px 16px">
+    <svg viewBox="0 0 64 46" class="hero-svg" style="width:64px" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
       <path d="M14 26 L50 26 L42 36 L22 36 Z"/>
       <path d="M32 4 L32 24 L16 24 Z"/>
       <path d="M36 10 L36 24 L48 24 Z"/>
       <path d="M2 42 q7 -6 14 0 t14 0 t14 0 t14 0"/>
     </svg>
-    <div class="hero-name">题舟</div>
-    <div class="hero-slogan">题海无涯 · 渡你上岸</div>
-    <div class="hero-stats">${EXAMS.length} 场考试 · ${totalQ} 道题 · 免登录 · 离线可用</div>
+    <div class="hero-name" style="font-size:22px;letter-spacing:6px;text-indent:6px;margin-top:4px">题海无涯 · 渡你上岸</div>
+    <div class="hero-stats">${EXAMS.length} 场考试可刷 · ${totalQ} 道题 · 免登录 · 离线可用 · 更多类目筹备中</div>
   </div>
   <div class="searchbox">
     <input id="skw" placeholder="搜索考试 / 科目 / 章节 / 考点…" oninput="doSearch()" onkeyup="if(event.key==='Enter')doSearch()">
   </div>
   <div id="sres"></div>
   ${catHTML}
-  <div class="card mut" style="font-size:13.5px">
-    没找到想考的？题舟按“数据包”扩展——驾考科目一、建造师、财会、教资等类目筹备中。<br>
-    到 <a href="https://github.com/laojinpassion/tizhou" target="_blank" style="color:var(--acc)">GitHub 项目页</a> 提需求，或按 README 自己做一份数据包。
+  <div class="footer-note">
+    目录持续扩充：新数据包上线后自动出现在对应类目。想催更某个考试，到
+    <a href="https://github.com/laojinpassion/tizhou" target="_blank" style="color:var(--acc)">GitHub 项目页</a> 提 issue，或按 README 自己做数据包（引擎零改动）。
   </div>`;
 }
 window.openExam=function(i){ EXIDX=i; EX=EXAMS[i]; initSubjects(); SES=null; nav('exam'); };
@@ -218,6 +288,12 @@ window.doSearch=function(){
   const box=document.getElementById('sres');
   if(!kw){ box.innerHTML=''; return; }
   const rows=[], seen=new Set();
+  CATALOG.forEach(c=>c.exams.forEach(x=>{
+    if(x.st!=='ready' && x.name.toLowerCase().includes(kw)){
+      const id='cat:'+x.name;
+      if(!seen.has(id)){ seen.add(id); rows.push({f:`toast('「${esc(x.name)}」数据包筹备中 — 到 GitHub 提需求可加速上线')`,txt:`${x.icon||'📘'} ${esc(x.name)}`,sub:'数据包筹备中'}); }
+    }
+  }));
   EXAMS.forEach((e,i)=>{
     e.subjects.forEach(s=>{
       const qs=DATA.banks[s.key]||[];
@@ -630,6 +706,7 @@ window.showMockWrong=function(){
 
 /* 启动 */
 renderHome();
+setTimeout(()=>{ const sp=document.getElementById('splash'); if(sp) sp.classList.add('hide'); }, 3000);
 </script>
 </body>
 </html>
