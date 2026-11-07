@@ -86,6 +86,11 @@ body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 system-ui,-app
 .sp-tip{font-size:11px;opacity:.5;margin-top:34px}
 #toast{position:fixed;left:50%;bottom:44px;transform:translateX(-50%);background:rgba(28,35,48,.93);color:#fff;border-radius:10px;padding:10px 16px;font-size:13.5px;z-index:98;opacity:0;transition:opacity .3s;pointer-events:none;max-width:82vw;text-align:center}
 #toast.show{opacity:1}
+.tabbar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:flex;z-index:50;padding-bottom:env(safe-area-inset-bottom)}
+.tabbar button{flex:1;border:0;background:none;padding:7px 0 5px;font-size:11px;color:var(--mut);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:0}
+.tabbar button.on{color:var(--acc);font-weight:700}
+.tabbar .ti{font-size:19px;line-height:1.3}
+#app{padding-bottom:76px}
 .footer-note{margin-top:18px;font-size:12.5px;color:var(--mut);line-height:1.7}
 .subject-card{cursor:pointer;position:relative;overflow:hidden}
 .subject-card .go{color:var(--acc);font-weight:700;font-size:14px}
@@ -141,7 +146,8 @@ const EXAMDT=EX.examDate?new Date(EX.examDate):null;
 /* 全量考试目录（产品类目宇宙；st: ready=已收录数据包 / soon=筹备中） */
 const CATALOG=[
  {cat:'🚗 驾驶驾考', exams:[
-   {name:'机动车驾驶考试（科目一/科目四）',icon:'🚦',st:'soon',note:'官方公开题库整理中'}]},
+   {name:'机动车驾驶考试（科目一）',icon:'🚦',st:'ready',pack:'jiakao2026'},
+   {name:'机动车驾驶考试（科目四·安全文明）',icon:'🚧',st:'soon',note:'数据包整理中'}]},
  {cat:'📊 经济职称', exams:[
    {name:'中级经济师（工商管理）',icon:'🎓',st:'ready',pack:'jjjs2026'},
    {name:'中级经济师（人力资源/金融/财税等）',icon:'🎓',st:'soon',note:'公共科目题库可共用，专业科目数据包筹备中'},
@@ -180,6 +186,10 @@ function toast(msg){
   if(!t){ t=document.createElement('div'); t.id='toast'; document.body.appendChild(t); }
   t.textContent=msg; t.classList.add('show');
   clearTimeout(_toastT); _toastT=setTimeout(()=>t.classList.remove('show'),2800);
+}
+function tabbarHTML(active){
+  const tabs=[['home','🏠','首页'],['wrong','❌','错题本'],['settings','👤','我的']];
+  return `<div class="tabbar">${tabs.map(t=>`<button class="${active===t[0]?'on':''}" onclick="nav('${t[0]}')"><span class="ti">${t[1]}</span>${t[2]}</button>`).join('')}</div>`;
 }
 const QMAP=new Map(); Object.values(SUBJECTS).forEach(s=>s.qs.forEach(q=>QMAP.set(q.id,q)));
 const findQ=id=>QMAP.get(id);
@@ -280,7 +290,8 @@ function renderHome(){
   <div class="footer-note">
     目录持续扩充：新数据包上线后自动出现在对应类目。想催更某个考试，到
     <a href="https://github.com/laojinpassion/tizhou" target="_blank" style="color:var(--acc)">GitHub 项目页</a> 提 issue，或按 README 自己做数据包（引擎零改动）。
-  </div>`;
+  </div>
+  ${tabbarHTML('home')}`;
 }
 window.openExam=function(i){ EXIDX=i; EX=EXAMS[i]; initSubjects(); SES=null; nav('exam'); };
 window.doSearch=function(){
@@ -322,9 +333,10 @@ window.goRes=function(i,skey,tag,c){
   else nav('subject',skey);
 };
 function renderExam(){
-  const days=EXAMDT?Math.max(0,Math.ceil((EXAMDT-Date.now())/864e5)):null;
+  const dt=EX.examDate?new Date(EX.examDate):null;
+  const days=dt?Math.max(0,Math.ceil((dt-Date.now())/864e5)):null;
   const wrongN=Object.keys(S.wrong).length;
-  const dayHTML=EXAMDT?`<div class="card" style="text-align:center">
+  const dayHTML=dt?`<div class="card" style="text-align:center">
     <div class="mut">距 ${esc(EX.name)} 开考</div>
     <div class="big">${days===0?'今天 🔥':days}<span style="font-size:18px;font-weight:600">${days===0?'':' 天'}</span></div>
     <div class="mut">${esc(EX.dateLabel||'')}</div>
@@ -533,32 +545,54 @@ function renderWrong(){
   $('#app').innerHTML=`
   <div class="topbar"><button class="back" onclick="nav('exam')">‹ 返回</button><div class="title">错题本</div><div class="sp"></div></div>
   ${ids.length?`<button class="btn" onclick="redoWrong()">🔁 错题重做（${ids.length} 题，乱序）</button><div class="small" style="text-align:center;margin-top:6px">重做全对会自动移出错题本</div>`:''}
-  ${html}`;
+  ${html}
+  ${tabbarHTML('wrong')}`;
 }
 window.delWrong=id=>{ delete S.wrong[id]; save(); renderWrong(); };
 window.redoWrong=()=>{ startSession(shuffle(Object.keys(S.wrong)),{title:'错题重做',redo:true}); };
 
 function renderSettings(){
+  let a=0,c=0;EX.subjects.forEach(s=>{const st=subjStats(s.key);a+=st.a;c+=st.c;});
+  const wrongN=Object.keys(S.wrong).length;
+  const mockN=S.mocks.length;
+  const mockHist=S.mocks.length?`<div class="card"><div class="h2">🏅 模考成绩（最近 ${S.mocks.length} 次）</div>${S.mocks.map(m=>{
+    const sub=(EX.subjects.find(s=>s.key===m.subject)||{}).short||m.subject;
+    return `<div class="wrongrow"><div class="tx"><b>${esc(sub)}　${m.score} 分</b><br><span class="small">${m.pass?'✓ 达到合格线':'未达合格线'} · ${m.date}</span></div></div>`;
+  }).join('')}</div>`:'';
   $('#app').innerHTML=`
-  <div class="topbar"><button class="back" onclick="nav('home')">‹ 返回</button><div class="title">设置与说明</div><div class="sp"></div></div>
+  <div class="topbar"><div class="title" style="text-align:left;font-weight:800">我的</div><div class="sp"></div></div>
+  <div class="card" style="text-align:center">
+    <div class="h2">学习概览 · ${esc(EX.name)}</div>
+    <div class="row" style="margin-top:8px;text-align:center">
+      <div style="flex:1"><div class="num">${a}</div><div class="small">累计做题</div></div>
+      <div style="flex:1"><div class="num">${a?Math.round(c/a*100)+'%':'—'}</div><div class="small">总正确率</div></div>
+      <div style="flex:1"><div class="num">${wrongN}</div><div class="small">错题待清</div></div>
+      <div style="flex:1"><div class="num">${mockN}</div><div class="small">模考次数</div></div>
+    </div>
+  </div>
+  ${mockHist}
   <div class="card">
-    <div class="h2">答案揭晓模式</div>
+    <div class="h2">⚙ 答案揭晓模式</div>
     <div class="mode">
       <button class="${S.mode==='batch'?'on':''}" onclick="setMode('batch')">批量揭晓（推荐）</button>
       <button class="${S.mode==='instant'?'on':''}" onclick="setMode('instant')">做一题看一题</button>
     </div>
-    <div class="small">批量模式：5 题一组做完统一判分揭晓。先逼自己完成回忆，记忆效果更好（检索练习）。<br>即时模式：你原本设想的"做一题立刻出答案+解析"，适合第一轮熟悉考点。</div>
+    <div class="small">批量模式：5 题一组做完统一判分，先逼自己完成回忆，记忆效果更好。即时模式：做一题立刻出答案解析，适合第一轮熟悉考点。</div>
   </div>
   <div class="card">
-    <div class="h2">题库概况</div>
-    ${Object.keys(SUBJECTS).map(k=>{const s=subjStats(k);return `<div class="mut">${esc(SUBJECTS[k].name)}：${s.total} 题 / ${s.chTotal} 章 · 已做 ${s.done} 题</div>`;}).join('')}
-    <div class="small" style="margin-top:6px">想加题：告诉你的 AI 助手"给第 X 章加题"，新题会追加进题库重新生成文件。</div>
-  </div>
-  <div class="card">
-    <div class="h2">数据</div>
+    <div class="h2">🗂 数据</div>
+    <div class="mut" style="margin-bottom:8px">当前数据包：${esc(EX.name)}（${EX.subjects.reduce((n,s)=>n+SUBJECTS[s.key].qs.length,0)} 题）。进度保存在本机浏览器，清缓存会丢。</div>
     <button class="btn sub" style="color:var(--bad)" onclick="wipe()">⚠ 清空全部做题数据</button>
   </div>
-  <div class="footer-note"><b>题舟</b> · 通用刷题引擎 v1 · 当前数据包：<b>${esc(EX.name)}</b>（${EX.subjects.length} 个科目，共 ${EX.subjects.reduce((n,s)=>n+SUBJECTS[s.key].qs.length,0)} 题）。${esc(EX.notice||'')}<br>引擎开源支持多证书：新增一个考试数据包（exam.*.json + 题库文件）即可扩展新证书，见 GitHub 项目页。</div>`;
+  <div class="card">
+    <div class="h2">ℹ 关于题舟</div>
+    <div class="small" style="line-height:1.8">
+      题舟 TiZhou · 通用刷题引擎 v1（开源 MIT）<br>
+      题库为按考试大纲生成的<b>模拟题</b>，非官方真题，以当年官方教材与考纲为准。<br>
+      想加新考试数据包 / 提需求：<a href="https://github.com/laojinpassion/tizhou" target="_blank" style="color:var(--acc)">GitHub · laojinpassion/tizhou</a>
+    </div>
+  </div>
+  ${tabbarHTML('settings')}`;
 }
 window.setMode=m=>{ S.mode=m; save(); renderSettings(); };
 window.wipe=()=>{ if(confirm('确定清空所有做题记录、错题本和统计吗？')){ S={mode:S.mode,stats:{},wrong:{}}; save(); nav('home'); } };

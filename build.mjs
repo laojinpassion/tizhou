@@ -1,29 +1,26 @@
-// 构建：把题库 JSON 校验后注入 app.html 模板，产出单文件 经济师刷题.html（含配图库与题图映射）
+// 构建：校验题库 → 组装数据 → 注入 app.html 模板 → 产出单文件应用（本地版 + Pages 版 index.html）
+// 结构：src/exam.*.json（考试数据包）+ src/bank_*.json（题库）+ src/figs.js（配图）+ src/fig_map.json（题图映射）
 import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = dirname(fileURLToPath(import.meta.url));
 const src = join(root, 'src');
-const BANK_ORDER = [
-  'bank_jc_1.json', 'bank_jc_2.json', 'bank_jc_3.json',
-  'bank_gs_1.json', 'bank_gs_2.json', 'bank_gs_3.json',
-];
 
 const template = readFileSync(join(src, 'app.html'), 'utf8');
-const bankFiles = [];
-const allQuestions = [];
 const errors = [];
 const stems = new Set();
-const counts = { jc: 0, gs: 0 };
+const counts = {};
 
-// 自动发现未列入顺序的新题库文件（按文件名排序追加，保证已有题目 id 不变）
+// 考试数据包：exam.*.json 提供科目白名单与考试结构
+const examFiles = readdirSync(src).filter(f => /^exam\..+\.json$/.test(f)).sort();
+const exams = examFiles.map(f => JSON.parse(readFileSync(join(src, f), 'utf8')));
+const subjectKeys = new Set(exams.flatMap(e => (e.subjects || []).map(s => s.key)));
+
+// 题库发现与校验（按文件名排序追加，保证已有题目 id 不变）
 const files = readdirSync(src).filter(f => /^bank_.*\.json$/.test(f)).sort();
+const allQuestions = [];
 for (const f of files) {
-  if (!BANK_ORDER.includes(f)) BANK_ORDER.push(f);
-}
-
-for (const f of BANK_ORDER) {
   let arr;
   try {
     arr = JSON.parse(readFileSync(join(src, f), 'utf8'));
@@ -33,7 +30,7 @@ for (const f of BANK_ORDER) {
   }
   arr.forEach((q, i) => {
     const at = `${f}[${i}]`;
-    if (!['jc', 'gs'].includes(q.s)) errors.push(`${at}: 科目 s 必须是 jc 或 gs`);
+    if (!subjectKeys.has(q.s)) errors.push(`${at}: 科目 s="${q.s}" 未在任何 exam.*.json 数据包中声明`);
     if (!['single', 'multi'].includes(q.t)) errors.push(`${at}: 题型 t 必须是 single 或 multi`);
     if (!q.q || !q.o || !q.a || !q.e || !q.cn || !q.p) errors.push(`${at}: 缺少必填字段(q/o/a/e/cn/p)`);
     if (q.o && (q.o.length < 4 || q.o.length > 5)) errors.push(`${at}: 选项数量应为 4 或 5`);
@@ -43,10 +40,9 @@ for (const f of BANK_ORDER) {
     if (q.t === 'multi' && q.a && q.a.length < 2) errors.push(`${at}: 多选题答案应不少于 2 个`);
     if (q.q && stems.has(q.q)) errors.push(`${at}: 题干重复`);
     if (q.q) stems.add(q.q);
-    if (q.s) counts[q.s]++;
+    if (q.s) counts[q.s] = (counts[q.s] || 0) + 1;
   });
   allQuestions.push(...arr);
-  bankFiles.push(f);
 }
 
 if (errors.length) {
@@ -70,9 +66,7 @@ for (const q of allQuestions) {
   }
 }
 
-// 考试数据包：exam.*.json 描述考试结构，题库按科目 key 归组
-const examFiles = readdirSync(src).filter(f => /^exam\..+\.json$/.test(f)).sort();
-const exams = examFiles.map(f => JSON.parse(readFileSync(join(src, f), 'utf8')));
+// 题库按科目 key 归组；校验每个数据包声明的科目都有题库
 const banks = {};
 allQuestions.forEach(q => { (banks[q.s] = banks[q.s] || []).push(q); });
 for (const ex of exams) {
@@ -80,9 +74,13 @@ for (const ex of exams) {
     if (!banks[s.key]) errors.push(`数据包 ${ex.id}: 科目 ${s.key} 没有对应题库（bank_*.json 中 s="${s.key}"）`);
   });
 }
-const DATA = { exams, banks };
+if (errors.length) {
+  console.error('校验未通过：');
+  errors.forEach(e => console.error('  ✗ ' + e));
+  process.exit(1);
+}
 
-const bankJs = JSON.stringify(allQuestions);
+const DATA = { exams, banks };
 const out = template
   .replace('/*__FIGS__*/', figsJs)
   .replace('/*__DATA__*/', JSON.stringify(DATA));
@@ -94,8 +92,8 @@ if (out === template) {
 const outFile = join(root, '经济师刷题.html');
 writeFileSync(outFile, out, 'utf8');
 writeFileSync(join(root, 'index.html'), out, 'utf8');
+const total = Object.values(counts).reduce((a, b) => a + b, 0);
 console.log(`✓ 构建成功：${outFile}（同步输出 index.html 供 GitHub Pages 使用）`);
-console.log(`  经济基础 ${counts.jc} 题 · 工商管理 ${counts.gs} 题 · 合计 ${counts.jc + counts.gs} 题`);
+console.log(`  题库总量：${total} 题（${Object.keys(counts).map(k => `${k}:${counts[k]}`).join(' ')}）`);
 console.log(`  配图题目：${figCount} 题（图库 ${figKeys.size} 张）`);
 console.log(`  考试数据包：${exams.map(e => e.name).join('、') || '无'}`);
-console.log(`  题库文件：${files.join(', ')}`);
