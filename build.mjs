@@ -14,7 +14,7 @@ const counts = {};
 
 // 考试数据包：exam.*.json 提供科目白名单与考试结构
 const examFiles = readdirSync(src).filter(f => /^exam\..+\.json$/.test(f)).sort();
-const exams = examFiles.map(f => JSON.parse(readFileSync(join(src, f), 'utf8')));
+const exams = examFiles.map(f => JSON.parse(readFileSync(join(src, f), 'utf8'))).sort((a, b) => (a.sort || 99) - (b.sort || 99));
 const subjectKeys = new Set(exams.flatMap(e => (e.subjects || []).map(s => s.key)));
 
 // 题库发现与校验（按文件名排序追加，保证已有题目 id 不变）

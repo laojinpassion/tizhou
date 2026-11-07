@@ -84,13 +84,67 @@ body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 system-ui,-app
 .sp-name{font-size:36px;font-weight:800;letter-spacing:14px;text-indent:14px;margin-top:12px}
 .sp-slogan{font-size:14px;opacity:.85;margin-top:8px;letter-spacing:2px}
 .sp-tip{font-size:11px;opacity:.5;margin-top:34px}
-#toast{position:fixed;left:50%;bottom:44px;transform:translateX(-50%);background:rgba(28,35,48,.93);color:#fff;border-radius:10px;padding:10px 16px;font-size:13.5px;z-index:98;opacity:0;transition:opacity .3s;pointer-events:none;max-width:82vw;text-align:center}
+/* ================= v3 主题层（主流 APP 视觉） ================= */
+:root{--brand:#2563eb;--brand2:#1d4ed8;--cta:#ff8a00;--bg:#eef2f8;--card:#ffffff;--ink:#111c2e;--mut:#7a8699;--line:#e6ebf3;--acc:#2563eb;--accbg:#eaf1ff;--ok:#16a34a;--okbg:#e8f7ee;--bad:#dc2626;--badbg:#fdeeee;--amber:#d97706;--amberbg:#fdf3e3}
+body{background:var(--bg)}
+#app{padding-bottom:88px}
+.topbar{padding:10px 14px 6px}
+.topbar .title{font-weight:800;letter-spacing:.5px}
+.card{border:none;border-radius:16px;box-shadow:0 1px 3px rgba(16,32,64,.06),0 6px 18px rgba(16,32,64,.05)}
+.h2{font-size:16.5px}
+.hero{background:linear-gradient(145deg,#3b82f6 0%,#2563eb 45%,#1e40af 100%);border-radius:0 0 24px 24px;padding:14px 16px 52px;margin-bottom:-34px;box-shadow:0 8px 24px rgba(37,99,235,.25)}
+.hero-name{font-size:21px;letter-spacing:5px;font-weight:800}
+.hero-stats{opacity:.8}
+.searchbox{position:relative;z-index:3;padding:0 16px;margin-bottom:18px}
+.searchbox input{border:none;border-radius:15px;box-shadow:0 10px 26px rgba(29,78,216,.16);padding:14px 16px;font-size:15px}
+.gname{display:flex;align-items:center;gap:7px;font-size:14.5px;color:var(--ink);font-weight:800;margin:18px 2px 10px}
+.gname::before{content:'';width:4px;height:16px;border-radius:2px;background:linear-gradient(180deg,#3b82f6,#1d4ed8)}
+.subject-card{border-radius:16px}
+.subject-card .h2{margin-bottom:4px}
+.subject-card .go{display:flex;align-items:center;justify-content:space-between;font-size:13.5px;color:var(--brand);font-weight:700}
+.subject-card .go::after{content:'›';font-size:20px;line-height:1;color:#b6c3d9}
+.chap{border:none;border-radius:15px;box-shadow:0 1px 3px rgba(16,32,64,.05);margin-bottom:10px}
+.chap .nm{font-weight:600}
+.badge{font-weight:700}
+.badge[style*="--okbg"]{padding:2px 9px;border-radius:20px}
+.btn{border-radius:15px;box-shadow:0 6px 16px rgba(37,99,235,.28)}
+.btn.ghost{box-shadow:none;background:var(--accbg);border-color:transparent;color:var(--brand)}
+.btn.sub{box-shadow:none;border-color:var(--line);border-radius:15px}
+.mode{border:none;border-radius:14px;overflow:hidden;box-shadow:inset 0 0 0 1.5px var(--line)}
+.mode button.on{background:var(--brand)}
+.opt{border-radius:13px;border-color:var(--line)}
+.opt.sel{background:var(--accbg);border-color:var(--brand);box-shadow:0 0 0 1px var(--brand) inset}
+.opt.correct{background:var(--okbg);border-color:var(--ok)}
+.opt.wrongpick{background:var(--badbg);border-color:var(--bad)}
+.progress{height:8px;border-radius:4px;background:#e4eaf3}
+.explain{background:#f7f9fc;border-radius:12px;padding:12px;margin-top:14px;border-top:none}
+.ktag{background:#fff4e0;color:#b45309;font-weight:700}
+.verdict{font-size:15.5px}
+.tabbar{border-top:none;box-shadow:0 -4px 20px rgba(16,32,64,.08)}
+.tabbar button{font-size:10.5px;letter-spacing:.5px;padding:8px 0 6px;color:#98a3b5}
+.tabbar button.on{color:var(--brand)}
+.sum-item{border:none;border-radius:14px;box-shadow:0 1px 3px rgba(16,32,64,.06)}
+.wrongrow{border:none;border-radius:13px;box-shadow:0 1px 3px rgba(16,32,64,.05)}
+.mockcard{border:none;border-radius:16px;box-shadow:0 2px 10px rgba(16,32,64,.06)}
+.menu-row{display:flex;align-items:center;gap:12px;background:#fff;border-radius:16px;padding:15px 16px;margin-bottom:10px;box-shadow:0 1px 3px rgba(16,32,64,.06);cursor:pointer}
+.menu-row .mi{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:19px;flex:none}
+.menu-row .mt{flex:1;font-weight:600;font-size:15px}
+.menu-row .md{font-size:12px;color:var(--mut);font-weight:400}
+.menu-row .ar{color:#b6c3d9;font-size:20px}
+.stat-tile{border-radius:14px;padding:12px 6px;text-align:center;color:#fff}
+.stat-tile .num{color:#fff;font-size:21px}
+.stat-tile .small{color:rgba(255,255,255,.8)}
+#splash{background:linear-gradient(165deg,#3b82f6 0%,#2563eb 45%,#123a7a 100%)}
+#splash .sp-name{animation:spFloat 2.6s ease-in-out infinite}
+@keyframes spFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@media (prefers-reduced-motion: reduce){#splash .sp-name{animation:none}}
+#toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:rgba(17,28,46,.93);color:#fff;border-radius:12px;padding:11px 17px;font-size:13.5px;z-index:98;opacity:0;transition:opacity .3s;pointer-events:none;max-width:82vw;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25)}
 #toast.show{opacity:1}
-.tabbar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:flex;z-index:50;padding-bottom:env(safe-area-inset-bottom)}
-.tabbar button{flex:1;border:0;background:none;padding:7px 0 5px;font-size:11px;color:var(--mut);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:0}
-.tabbar button.on{color:var(--acc);font-weight:700}
-.tabbar .ti{font-size:19px;line-height:1.3}
-#app{padding-bottom:76px}
+.tabbar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:none;display:flex;z-index:50;padding-bottom:env(safe-area-inset-bottom)}
+.tabbar button{flex:1;border:0;background:none;padding:7px 0 5px;font-size:10.5px;letter-spacing:.5px;color:#98a3b5;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:0}
+.tabbar button.on{color:var(--brand);font-weight:700}
+.tabbar .ti{font-size:20px;line-height:1.35}
+#app{padding-bottom:88px}
 .footer-note{margin-top:18px;font-size:12.5px;color:var(--mut);line-height:1.7}
 .subject-card{cursor:pointer;position:relative;overflow:hidden}
 .subject-card .go{color:var(--acc);font-weight:700;font-size:14px}
@@ -102,6 +156,11 @@ body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 system-ui,-app
 .ansgrid b{width:34px;height:30px;border:1px solid var(--line);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:var(--mut)}
 .ansgrid b.ans{background:var(--acc);color:#fff;border-color:var(--acc)}
 .ansgrid b.cur{outline:2px solid var(--amber)}
+.exbanner{background:linear-gradient(145deg,#3b82f6,#1e40af);color:#fff;margin:-14px -14px 16px;padding:16px 16px 22px;border-radius:0 0 24px 24px;position:relative;box-shadow:0 8px 24px rgba(30,64,175,.28)}
+.exbanner .eb-back{position:absolute;left:12px;top:14px;width:34px;height:34px;border-radius:50%;border:none;background:rgba(255,255,255,.18);color:#fff;font-size:19px;cursor:pointer;line-height:1}
+.eb-icon{font-size:34px;line-height:1.2}
+.eb-name{font-size:20px;font-weight:800;margin-top:4px}
+.eb-meta{font-size:12.5px;opacity:.88;margin-top:3px}
 </style>
 </head>
 <body>
@@ -147,13 +206,13 @@ const EXAMDT=EX.examDate?new Date(EX.examDate):null;
 const CATALOG=[
  {cat:'🚗 驾驶驾考', exams:[
    {name:'机动车驾驶考试（科目一）',icon:'🚦',st:'ready',pack:'jiakao2026'},
-   {name:'机动车驾驶考试（科目四·安全文明）',icon:'🚧',st:'soon',note:'数据包整理中'}]},
+   {name:'机动车驾驶考试（科目四·安全文明）',icon:'🛡️',st:'ready',pack:'jiakao4'}]},
  {cat:'📊 经济职称', exams:[
    {name:'中级经济师（工商管理）',icon:'🎓',st:'ready',pack:'jjjs2026'},
    {name:'中级经济师（人力资源/金融/财税等）',icon:'🎓',st:'soon',note:'公共科目题库可共用，专业科目数据包筹备中'},
    {name:'初级经济师',icon:'🎓',st:'soon'}]},
  {cat:'💰 财会金融', exams:[
-   {name:'初级会计职称',icon:'🧾',st:'soon'},
+   {name:'初级会计职称',icon:'🧾',st:'ready',pack:'cjk2026'},
    {name:'中级会计职称',icon:'🧮',st:'soon'},
    {name:'注册会计师（CPA）',icon:'📈',st:'soon'},
    {name:'税务师',icon:'🧰',st:'soon'},
@@ -188,7 +247,7 @@ function toast(msg){
   clearTimeout(_toastT); _toastT=setTimeout(()=>t.classList.remove('show'),2800);
 }
 function tabbarHTML(active){
-  const tabs=[['home','🏠','首页'],['wrong','❌','错题本'],['settings','👤','我的']];
+  const tabs=[['home','🏠','首页'],['mockSelect','📝','模考'],['wrong','❌','错题本'],['settings','👤','我的']];
   return `<div class="tabbar">${tabs.map(t=>`<button class="${active===t[0]?'on':''}" onclick="nav('${t[0]}')"><span class="ti">${t[1]}</span>${t[2]}</button>`).join('')}</div>`;
 }
 const QMAP=new Map(); Object.values(SUBJECTS).forEach(s=>s.qs.forEach(q=>QMAP.set(q.id,q)));
@@ -256,10 +315,13 @@ function renderHome(){
         const ei=EXAMS.findIndex(e=>e.id===x.pack), e=EXAMS[ei];
         const qn=e.subjects.reduce((m,s)=>m+((DATA.banks[s.key]||[]).length),0);
         const days=e.examDate?Math.max(0,Math.ceil((new Date(e.examDate)-Date.now())/864e5)):null;
+        const subjLine=e.subjects.length>1
+          ? e.subjects.map(s=>`${esc(s.short||s.name)} ${(DATA.banks[s.key]||[]).length}题`).join(' · ')+` · 共 ${qn} 题`
+          : `共 ${qn} 题`;
         return `<div class="card subject-card" onclick="openExam(${ei})">
           <div class="h2">${e.icon||'📚'} ${esc(e.name)} <span class="badge" style="background:var(--okbg);color:var(--ok)">可刷</span></div>
-          <div class="mut">${e.subjects.map(s=>`${esc(s.short||s.name)} ${(DATA.banks[s.key]||[]).length}题`).join(' · ')} · 共 ${qn} 题</div>
-          <div class="mut small" style="margin-top:4px">${days!==null?`距开考 ${days===0?'今天 🔥':days+' 天'} · `:''}点击进入科目 ›</div>
+          <div class="mut">${subjLine}</div>
+          <div class="mut small" style="margin-top:4px">${days!==null?`距开考 ${days===0?'今天 🔥':days+' 天'} · `:''}${e.subjects.length>1?'点击进入科目':'开始刷题'} ›</div>
         </div>`;
       }
       const note=x.note?`（${esc(x.note)}）`:'';
@@ -353,8 +415,12 @@ function renderExam(){
   const lastMock=S.mocks&&S.mocks.length?S.mocks[0]:null;
   const lastSub=lastMock?(EX.subjects.find(s=>s.key===lastMock.subject)||{}):null;
   $('#app').innerHTML=`
-  <div class="topbar"><button class="back" onclick="nav('home')">‹ 类目</button><div class="title">${esc(EX.name)}</div><div class="sp"></div></div>
-  ${dayHTML}
+  <div class="exbanner">
+    <button class="eb-back" onclick="nav('home')">‹</button>
+    <div class="eb-icon">${EX.icon||'📚'}</div>
+    <div class="eb-name">${esc(EX.name)}</div>
+    <div class="eb-meta">${(()=>{const dt=EX.examDate?new Date(EX.examDate):null;const d=dt?Math.max(0,Math.ceil((dt-Date.now())/864e5)):null;return d===null?esc(EX.dateLabel||''):`距开考 <b style="font-size:17px">${d===0?'今天':d+' 天'}</b>`;})()}</div>
+  </div>
   ${subjCards}
   <div class="card subject-card" onclick="nav('wrong')">
     <div class="h2">🔴 错题本 <span class="badge b-multi">${wrongN}</span></div>
@@ -560,7 +626,11 @@ function renderSettings(){
     return `<div class="wrongrow"><div class="tx"><b>${esc(sub)}　${m.score} 分</b><br><span class="small">${m.pass?'✓ 达到合格线':'未达合格线'} · ${m.date}</span></div></div>`;
   }).join('')}</div>`:'';
   $('#app').innerHTML=`
-  <div class="topbar"><div class="title" style="text-align:left;font-weight:800">我的</div><div class="sp"></div></div>
+  <div class="exbanner">
+    <div class="eb-icon">👤</div>
+    <div class="eb-name">我的学习</div>
+    <div class="eb-meta">当前备考：${esc(EX.name)}</div>
+  </div>
   <div class="card" style="text-align:center">
     <div class="h2">学习概览 · ${esc(EX.name)}</div>
     <div class="row" style="margin-top:8px;text-align:center">
@@ -608,11 +678,12 @@ function renderMockSelect(){
     return `<div class="mockcard" onclick="startMock('${s.key}')"><div class="ic">${s.icon||'📘'}</div><div class="tx"><b>${esc(s.name)}</b><div class="mut small">${parts.join(' + ')} · 共 ${r.total||'?'} 题 · ${r.dur||105} 分钟</div></div></div>`;
   }).join('');
   $('#app').innerHTML=`
-  <div class="topbar"><button class="back" onclick="nav('exam')">‹ 返回</button><div class="title">全真模考</div><div class="sp"></div></div>
-  <div class="card"><div class="h2">规则说明</div><div class="mut">按真实考试结构随机组卷并计时，到时自动交卷。评分规则：单选 1 分/题；多选与案例分析 2 分/题——<b>错选不得分，少选且所选均正确时每个正确选项得 0.5 分</b>。满分 ${EX.totalScore} 分，${EX.passScore} 分及格。模考中答案不即时揭晓，交卷后统一出分。</div></div>
+  <div class="topbar"><div class="title" style="text-align:left;font-weight:800">📝 全真模考</div><div class="sp"></div></div>
+  <div class="card"><div class="h2">规则说明</div><div class="mut">按真实考试结构随机组卷并计时，到时自动交卷。评分规则：单选 ${(EX.mock[s]||{}).singlePts||1} 分/题；多选与案例分析 2 分/题——<b>错选不得分，少选且所选均正确时每个正确选项得 0.5 分</b>。满分 ${EX.totalScore} 分，${EX.passScore} 分及格。模考中答案不即时揭晓，交卷后统一出分。</div></div>
   ${m?`<div class="card"><div class="mut">最近一次模考：${esc((EX.subjects.find(s=>s.key===m.subject)||{}).short||m.subject)} <b>${m.score} 分</b> · ${m.pass?'✓ 达到合格线':'未达 '+EX.passScore+' 分合格线'} · ${m.date}</div></div>`:''}
   ${mockCards}
-  <div class="footer-note">建议在电脑上做模考以模拟机考手感。中途关闭页面进度会保留，可从首页"继续模考"恢复；切出页面计时不会暂停，请专注作答。</div>`;
+  <div class="footer-note">建议在电脑上做模考以模拟机考手感。中途关闭页面进度会保留，可从考试页"继续模考"恢复；切出页面计时不会暂停，请专注作答。</div>
+  ${tabbarHTML('mockSelect')}`;
 }
 window.startMockSelect=function(){ nav('mockSelect'); };
 window.startMock=function(s){
@@ -684,23 +755,25 @@ window.quitMock=function(){
   if(confirm('模考进行中。退出将保留进度（计时继续），可从本科页"继续模考"恢复。确认退出？')){ clearInterval(MKTimer); MK=null; nav('exam'); }
 };
 window.submitMockConfirm=function(){ if(confirm('确认交卷？未作答的题目按 0 分计。')) finishMock(false); };
-function scoreOne(q,sel){
+function scoreOne(q,sel,singlePts){
+  const sp=singlePts||1;
   if(!sel||!sel.length)return 0;
   if(q.bg||q.t==='multi'){ /* 案例分析小题与多选：一律2分，错选不得分，少选每个正确项0.5分 */
     if(sel.some(i=>!q.a.includes(i))) return 0;
     if(sel.length===q.a.length) return 2;
     return 0.5*sel.length;
   }
-  return sel.length===1&&sel[0]===q.a[0]?1:0;
+  return sel.length===1&&sel[0]===q.a[0]?sp:0;
 }
 function finishMock(auto){
   if(!MK)return;
   MK.done=true; clearInterval(MKTimer);
+  const singlePts=((EX.mock||{})[MK.s]||{}).singlePts||1;
   let score=0; const det={single:[0,0],multi:[0,0],case:[0,0]}; const wrongIds=[];
   MK.qs.forEach((q,i)=>{
-    const sel=MK.selBy[i]||[]; const sc=scoreOne(q,sel); score+=sc;
+    const sel=MK.selBy[i]||[]; const sc=scoreOne(q,sel,singlePts); score+=sc;
     const kind=q.bg?'case':q.t;
-    det[kind][0]+=sc; det[kind][1]+=(q.bg||q.t==='multi')?2:1;
+    det[kind][0]+=sc; det[kind][1]+=(q.bg||q.t==='multi')?2:singlePts;
     if(!sel.length||!eqSet(sel,q.a)) wrongIds.push(q.id);
   });
   const rec={date:todayISO(),subject:MK.s,score:Math.round(score*10)/10,pass:score>=EX.passScore,total:MK.qs.length,
