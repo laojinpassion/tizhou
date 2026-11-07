@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2f6fb2">
+<title>题舟 · 通用刷题引擎</title>
+<style>
+:root{--bg:#f4f6f9;--card:#fff;--ink:#1c2330;--mut:#6b7686;--acc:#2f6fb2;--accbg:#eef5fc;--ok:#2e8b57;--okbg:#ecf7f0;--bad:#c94f4f;--badbg:#fbeeee;--line:#e3e8ef;--amber:#b7791f;--amberbg:#fdf6e7}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+#app{max-width:600px;margin:0 auto;padding:14px 14px 48px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px}
+.h1{font-size:22px;font-weight:700;line-height:1.4}
+.h2{font-size:17px;font-weight:700;margin:0 0 6px}
+.mut{color:var(--mut);font-size:14px}
+.small{font-size:13px;color:var(--mut)}
+.topbar{display:flex;align-items:center;gap:8px;margin-bottom:12px;position:sticky;top:0;background:var(--bg);padding:6px 0;z-index:5}
+.back{border:1px solid var(--line);background:#fff;border-radius:10px;padding:6px 12px;font-size:15px;cursor:pointer}
+.topbar .title{font-weight:700;font-size:16px;flex:1;text-align:center}
+.topbar .sp{width:58px}
+.badge{display:inline-block;font-size:12px;border-radius:8px;padding:1px 8px;margin-left:6px;vertical-align:2px}
+.b-single{background:var(--accbg);color:var(--acc)}
+.b-multi{background:var(--amberbg);color:var(--amber)}
+.progress{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin:8px 0 14px}
+.progress i{display:block;height:100%;background:var(--acc);border-radius:3px;transition:width .25s}
+.stem{font-weight:600;font-size:16.5px;margin:2px 0 10px;white-space:pre-wrap}
+.opt{display:flex;gap:8px;width:100%;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:11px 13px;margin:8px 0;font-size:15.5px;line-height:1.55;cursor:pointer;color:var(--ink)}
+.opt .abc{font-weight:700;color:var(--mut);flex:none}
+.opt.sel{border-color:var(--acc);background:var(--accbg)}
+.opt.correct{border-color:var(--ok);background:var(--okbg)}
+.opt.correct .abc{color:var(--ok)}
+.opt.wrongpick{border-color:var(--bad);background:var(--badbg)}
+.opt.dim{opacity:.6}
+.opt.lock{cursor:default}
+.btn{display:block;width:100%;border:0;border-radius:12px;padding:13px;font-size:16px;font-weight:700;cursor:pointer;margin-top:12px;background:var(--acc);color:#fff}
+.btn.ghost{background:#fff;color:var(--acc);border:1.5px solid var(--acc)}
+.btn.sub{background:#fff;color:var(--ink);border:1px solid var(--line);font-weight:600}
+.btn:disabled{opacity:.45}
+.explain{margin-top:14px;border-top:1px dashed var(--line);padding-top:12px;font-size:15px;white-space:pre-wrap}
+.ktag{display:inline-block;background:var(--amberbg);color:var(--amber);border-radius:8px;padding:2px 10px;font-size:13px;margin-bottom:8px}
+.verdict{font-weight:700;margin-top:12px;font-size:16px}
+.v-ok{color:var(--ok)} .v-bad{color:var(--bad)}
+.chap{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:9px;cursor:pointer}
+.chap .nm{flex:1;font-size:15.5px;font-weight:600}
+.chap .st{font-size:13px;color:var(--mut);text-align:right;white-space:nowrap}
+.bar{height:4px;background:var(--line);border-radius:2px;margin-top:6px;overflow:hidden;width:100%}
+.bar i{display:block;height:100%;background:var(--ok)}
+.gname{font-size:13px;color:var(--mut);font-weight:700;margin:14px 2px 8px}
+.big{font-size:44px;font-weight:800;line-height:1.1;color:var(--acc)}
+.row{display:flex;gap:10px}
+.row .card{flex:1;margin-bottom:0}
+.num{font-size:24px;font-weight:800}
+.pct-ok{color:var(--ok)} .pct-mid{color:var(--amber)} .pct-bad{color:var(--bad)}
+.wrongrow{display:flex;align-items:flex-start;gap:8px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+.wrongrow .tx{flex:1;font-size:14.5px}
+.del{border:0;background:none;color:var(--mut);font-size:13px;cursor:pointer;padding:2px 4px;flex:none}
+.mode{display:flex;gap:0;border:1.5px solid var(--line);border-radius:12px;overflow:hidden;margin:8px 0}
+.mode button{flex:1;border:0;background:#fff;padding:11px;font-size:15px;cursor:pointer;font-weight:600;color:var(--mut)}
+.mode button.on{background:var(--acc);color:#fff}
+.sum-item{border:1px solid var(--line);border-radius:12px;margin-bottom:9px;overflow:hidden;background:#fff}
+.sum-head{display:flex;gap:8px;align-items:flex-start;padding:11px 13px;cursor:pointer;font-size:14.5px}
+.sum-head .mk{font-weight:800;flex:none}
+.sum-body{padding:0 13px 13px;border-top:1px dashed var(--line);display:none}
+.sum-item.open .sum-body{display:block}
+.figbox{margin:10px 0;border:1px solid var(--line);border-radius:12px;background:#fbfcfe;padding:8px 8px 2px;overflow-x:auto}
+.figbox svg{display:block;width:100%;max-width:430px;height:auto;margin:0 auto}
+.figbox svg text{paint-order:stroke;stroke:#fbfcfe;stroke-width:3px;stroke-linejoin:round}
+.figcap{font-size:12px;color:var(--mut);text-align:center;padding:2px 0 6px}
+.hero{background:linear-gradient(135deg,#2f6fb2,#173d61);color:#fff;border-radius:16px;padding:24px 18px 20px;text-align:center;margin-bottom:14px}
+.hero-svg{width:76px;opacity:.95;margin:0 auto;display:block}
+.hero-name{font-size:27px;font-weight:800;letter-spacing:8px;margin-top:2px;text-indent:8px}
+.hero-slogan{font-size:13px;opacity:.85;margin-top:3px;letter-spacing:1px}
+.hero-stats{font-size:12px;opacity:.7;margin-top:12px}
+.searchbox{margin-bottom:14px}
+.searchbox input{width:100%;box-sizing:border-box;border:1.5px solid var(--line);border-radius:12px;padding:12px 15px;font-size:15px;background:#fff;outline:none}
+.searchbox input:focus{border-color:var(--acc)}
+.sres-row{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 13px;margin-bottom:8px;cursor:pointer}
+.sres-row .tx{font-size:14.5px;font-weight:600}
+.sres-row .sub{font-size:12px;color:var(--acc);margin-top:2px}
+.footer-note{margin-top:18px;font-size:12.5px;color:var(--mut);line-height:1.7}
+.subject-card{cursor:pointer;position:relative;overflow:hidden}
+.subject-card .go{color:var(--acc);font-weight:700;font-size:14px}
+.bgc{background:#f8fafd;border:1px dashed var(--line);border-radius:12px;padding:10px 12px;margin-bottom:10px;font-size:14.5px}
+.bgc summary{cursor:pointer;font-weight:700;color:var(--acc)}
+.bgc div{white-space:pre-wrap;margin-top:6px}
+.timer{font-variant-numeric:tabular-nums;font-weight:800;font-size:18px;color:var(--acc)}
+.ansgrid{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.ansgrid b{width:34px;height:30px;border:1px solid var(--line);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:var(--mut)}
+.ansgrid b.ans{background:var(--acc);color:#fff;border-color:var(--acc)}
+.ansgrid b.cur{outline:2px solid var(--amber)}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>/*__FIGS__*/</script>
+<script>window.__DATA__ = /*__DATA__*/;</script>
+<script>
+/* ============ 数据与状态（引擎读数据包） ============ */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const todayISO=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
+
+const DATA=window.__DATA__||{exams:[],banks:{}};
+const EXAMS=DATA.exams.length?DATA.exams:[{id:'default',name:'题舟',subjects:[],mock:{},passScore:60,totalScore:100,examDate:null,dateLabel:'',icon:'📚',notice:''}];
+let EXIDX=0, EX=EXAMS[0];
+const SUBJECTS={};
+function initSubjects(){
+  Object.keys(SUBJECTS).forEach(k=>delete SUBJECTS[k]);
+  (EX.subjects||[]).forEach(s=>{ SUBJECTS[s.key]={name:s.name,short:s.short||s.name,tag:s.tag||'',icon:s.icon||'📘',qs:[]}; });
+  Object.keys(DATA.banks||{}).forEach(k=>{
+    (DATA.banks[k]||[]).forEach(q=>{
+      const s=SUBJECTS[k];
+      if(s&&q.q&&q.o&&q.a){ q.id=k+':'+s.qs.length; s.qs.push(q); }
+    });
+  });
+  document.title=(EX.name?EX.name+' · ':'')+'题舟刷题';
+}
+initSubjects();
+const EXAMDT=EX.examDate?new Date(EX.examDate):null;
+const QMAP=new Map(); Object.values(SUBJECTS).forEach(s=>s.qs.forEach(q=>QMAP.set(q.id,q)));
+const findQ=id=>QMAP.get(id);
+
+let S;
+try{ S=JSON.parse(localStorage.getItem('jj_state_v1'))||{}; }catch(e){ S={}; }
+S.mode=S.mode==='instant'?'instant':'batch';
+S.stats=S.stats||{}; S.wrong=S.wrong||{}; S.mocks=S.mocks||[]; S.mockLive=S.mockLive||null;
+function save(){ try{localStorage.setItem('jj_state_v1',JSON.stringify(S));}catch(e){} }
+
+function chapters(skey){
+  const map=new Map();
+  SUBJECTS[skey].qs.forEach(q=>{
+    const key=q.p+'|'+q.c;
+    if(!map.has(key)) map.set(key,{p:q.p,c:q.c,cn:q.cn,qs:[]});
+    map.get(key).qs.push(q);
+  });
+  return [...map.values()];
+}
+function subjStats(skey){
+  let a=0,c=0,chs=new Set();
+  SUBJECTS[skey].qs.forEach(q=>{ const st=S.stats[q.id]; if(st&&st.a){a+=st.a;c+=st.c;chs.add(q.p+'|'+q.c);} });
+  const total=SUBJECTS[skey].qs.length;
+  const touched=new Set();
+  SUBJECTS[skey].qs.forEach(q=>{ if(S.stats[q.id]&&S.stats[q.id].a) touched.add(q.id); });
+  return {a,c,total,done:touched.size,chTotal:chapters(skey).length,chTouched:chs.size};
+}
+function accCls(p){ return p>=80?'pct-ok':(p>=60?'pct-mid':'pct-bad'); }
+function pct(a,c){ return a?Math.round(c/a*100):0; }
+
+/* ============ 会话 ============ */
+let SES=null;
+function shuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function startSession(qids,opts={}){
+  const qs=qids.map(findQ).filter(Boolean);
+  if(!qs.length){ alert('暂无可刷的题目'); return; }
+  SES={qs,idx:0,sel:null,revealed:false,batchStart:0,wrongAdded:0,title:opts.title||'',redo:!!opts.redo,source:opts.source||''};
+  nav('quiz');
+}
+function figHTML(q){
+  const f=window.__FIGS__&&q.fig&&window.__FIGS__[q.fig];
+  return f?`<div class="figbox">${f}<div class="figcap">📐 理解配图（示意图，作答以题干为准）</div></div>`:'';
+}
+const eqSet=(x,y)=>x.length===y.length&&x.every(v=>y.includes(v));
+
+function record(q,sel,atIdx){
+  const st=S.stats[q.id]||(S.stats[q.id]={a:0,c:0}); st.a++;
+  const ok=eqSet(sel,q.a);
+  if(ok) st.c++;
+  else S.wrong[q.id]=todayISO();
+  if(ok&&SES.redo) delete S.wrong[q.id];
+  if(SES) SES.results=SES.results||{}, SES.results[atIdx!==undefined?atIdx:SES.idx]=ok;
+  save(); return ok;
+}
+
+/* ============ 渲染 ============ */
+function nav(screen,arg){ ({home:renderHome,exam:renderExam,subject:renderSubject,quiz:renderQuiz,wrong:renderWrong,settings:renderSettings,mockSelect:renderMockSelect,mockRun:renderMockRun})[screen](arg); }
+
+function renderHome(){
+  const totalQ=EXAMS.reduce((n,e)=>n+e.subjects.reduce((m,s)=>m+((DATA.banks[s.key]||[]).length),0),0);
+  const cats={};
+  EXAMS.forEach((e,i)=>{ const c=e.cat||'其他考试'; (cats[c]=cats[c]||[]).push({e,i}); });
+  const catHTML=Object.keys(cats).map(c=>`
+    <div class="gname">${esc(c)}</div>
+    ${cats[c].map(({e,i})=>{
+      const qn=e.subjects.reduce((m,s)=>m+((DATA.banks[s.key]||[]).length),0);
+      const days=e.examDate?Math.max(0,Math.ceil((new Date(e.examDate)-Date.now())/864e5)):null;
+      return `<div class="card subject-card" onclick="openExam(${i})">
+        <div class="h2">${e.icon||'📚'} ${esc(e.name)}</div>
+        <div class="mut">${e.subjects.map(s=>`${esc(s.short||s.name)} ${(DATA.banks[s.key]||[]).length}题`).join(' · ')} · 共 ${qn} 题</div>
+        <div class="mut small" style="margin-top:4px">${days!==null?`距开考 ${days===0?'今天 🔥':days+' 天'} · `:''}点击进入科目 ›</div>
+      </div>`;
+    }).join('')}`).join('');
+  $('#app').innerHTML=`
+  <div class="hero">
+    <svg viewBox="0 0 64 46" class="hero-svg" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M14 26 L50 26 L42 36 L22 36 Z"/>
+      <path d="M32 4 L32 24 L16 24 Z"/>
+      <path d="M36 10 L36 24 L48 24 Z"/>
+      <path d="M2 42 q7 -6 14 0 t14 0 t14 0 t14 0"/>
+    </svg>
+    <div class="hero-name">题舟</div>
+    <div class="hero-slogan">题海无涯 · 渡你上岸</div>
+    <div class="hero-stats">${EXAMS.length} 场考试 · ${totalQ} 道题 · 免登录 · 离线可用</div>
+  </div>
+  <div class="searchbox">
+    <input id="skw" placeholder="搜索考试 / 科目 / 章节 / 考点…" oninput="doSearch()" onkeyup="if(event.key==='Enter')doSearch()">
+  </div>
+  <div id="sres"></div>
+  ${catHTML}
+  <div class="card mut" style="font-size:13.5px">
+    没找到想考的？题舟按“数据包”扩展——驾考科目一、建造师、财会、教资等类目筹备中。<br>
+    到 <a href="https://github.com/laojinpassion/tizhou" target="_blank" style="color:var(--acc)">GitHub 项目页</a> 提需求，或按 README 自己做一份数据包。
+  </div>`;
+}
+window.openExam=function(i){ EXIDX=i; EX=EXAMS[i]; initSubjects(); SES=null; nav('exam'); };
+window.doSearch=function(){
+  const kw=(document.getElementById('skw').value||'').trim().toLowerCase();
+  const box=document.getElementById('sres');
+  if(!kw){ box.innerHTML=''; return; }
+  const rows=[], seen=new Set();
+  EXAMS.forEach((e,i)=>{
+    e.subjects.forEach(s=>{
+      const qs=DATA.banks[s.key]||[];
+      const hits=[];
+      if((e.name+' '+(s.name||'')+' '+(s.short||'')).toLowerCase().includes(kw)) hits.push('subj');
+      const chs={};
+      qs.forEach(q=>{ const k=(q.p||'')+'|'+q.c; if(!chs[k])chs[k]={p:q.p,c:q.c,cn:q.cn,n:0}; chs[k].n++; });
+      Object.values(chs).forEach(ch=>{ if(((ch.cn||'')+' '+(ch.p||'')).toLowerCase().includes(kw)) hits.push('chap:'+ch.c); });
+      const tags=new Set(qs.map(q=>q.k).filter(Boolean));
+      tags.forEach(tag=>{ if(tag.toLowerCase().includes(kw)) hits.push('tag:'+tag); });
+      hits.forEach(h=>{
+        if(h==='subj'){ const id='s:'+i+':'+s.key; if(!seen.has(id)){seen.add(id); rows.push({f:`goRes(${i},'${s.key}',null,null)`,txt:`${e.icon||'📚'} ${esc(e.name)} › ${esc(s.name)}（${qs.length} 题）`,sub:'进入科目'});} }
+        else if(h.startsWith('chap:')){ const c=+h.slice(5); const id='c:'+i+':'+s.key+':'+c; const ch=Object.values(chs).find(x=>x.c===c); if(!seen.has(id)&&ch){seen.add(id); rows.push({f:`goRes(${i},'${s.key}',null,${c})`,txt:`${esc(e.name)} › ${esc(ch.cn)}（${ch.n} 题）`,sub:'直接开刷这一章'});} }
+        else { const tag=h.slice(4); const id='t:'+i+':'+s.key+':'+tag; if(!seen.has(id)){seen.add(id); rows.push({f:`goRes(${i},'${s.key}','${tag.replace(/'/g,"\\'")}',null)`,txt:`考点「${esc(tag)}」`,sub:`${esc(e.name)} › ${esc(s.short||s.name)} · 考点直刷`});} }
+      });
+    });
+  });
+  box.innerHTML = rows.length
+    ? rows.slice(0,30).map(r=>`<div class="sres-row" onclick="${r.f}"><div class="tx">${r.txt}</div><div class="sub">${r.sub} ›</div></div>`).join('')
+    : `<div class="card mut" style="font-size:13.5px">没有匹配「${esc(kw)}」的内容。该考试的数据包可能还未收录——欢迎到 GitHub 提需求。</div>`;
+};
+window.goRes=function(i,skey,tag,c){
+  if(EXAMS[EXIDX]!==EXAMS[i]){ EXIDX=i; EX=EXAMS[i]; initSubjects(); SES=null; }
+  if(tag){ startSession((DATA.banks[skey]||[]).filter(q=>q.k===tag).map(q=>q.id),{title:'考点：'+tag}); }
+  else if(c){ startChapter(skey,c); }
+  else nav('subject',skey);
+};
+function renderExam(){
+  const days=EXAMDT?Math.max(0,Math.ceil((EXAMDT-Date.now())/864e5)):null;
+  const wrongN=Object.keys(S.wrong).length;
+  const dayHTML=EXAMDT?`<div class="card" style="text-align:center">
+    <div class="mut">距 ${esc(EX.name)} 开考</div>
+    <div class="big">${days===0?'今天 🔥':days}<span style="font-size:18px;font-weight:600">${days===0?'':' 天'}</span></div>
+    <div class="mut">${esc(EX.dateLabel||'')}</div>
+  </div>`:'';
+  const subjCards=EX.subjects.map(s=>{
+    const st=subjStats(s.key);
+    return `<div class="card subject-card" onclick="nav('subject','${s.key}')">
+      <div class="h2">${s.icon||'📘'} ${esc(s.name)} <span class="small">${esc(s.tag||'')}</span></div>
+      <div class="mut">题库 ${st.total} 题 · 已做 ${st.done} 题 · 覆盖 ${st.chTouched}/${st.chTotal} 章</div>
+      <div class="go" style="margin-top:6px">进入刷题 ›</div>
+    </div>`;
+  }).join('');
+  const tot=(()=>{let a=0,c=0;EX.subjects.forEach(s=>{const st=subjStats(s.key);a+=st.a;c+=st.c;});return a?Math.round(c/a*100)+'%':'—';})();
+  const lastMock=S.mocks&&S.mocks.length?S.mocks[0]:null;
+  const lastSub=lastMock?(EX.subjects.find(s=>s.key===lastMock.subject)||{}):null;
+  $('#app').innerHTML=`
+  <div class="topbar"><button class="back" onclick="nav('home')">‹ 类目</button><div class="title">${esc(EX.name)}</div><div class="sp"></div></div>
+  ${dayHTML}
+  ${subjCards}
+  <div class="card subject-card" onclick="nav('wrong')">
+    <div class="h2">🔴 错题本 <span class="badge b-multi">${wrongN}</span></div>
+    <div class="mut">做错的题自动收进来，重做全对才会移出</div>
+  </div>
+  ${S.mockLive?`<div class="card subject-card" onclick="resumeMock()">
+    <div class="h2">⏯ 继续模考</div>
+    <div class="mut">上次模考未完成，点击恢复（剩余时间自动计算）</div>
+  </div>`:''}
+  <div class="card subject-card" onclick="startMockSelect()">
+    <div class="h2">⏱ 全真模考</div>
+    <div class="mut">仿真组卷+计时评分 · 满分 ${EX.totalScore} · ${EX.passScore} 及格</div>
+    ${lastMock?`<div class="mut small" style="margin-top:6px">最近成绩：${esc(lastSub?lastSub.short:lastMock.subject)} ${lastMock.score} 分 · ${lastMock.date}</div>`:'<div class="mut small" style="margin-top:6px">按真实考试结构组卷计时，建议在电脑上做</div>'}
+  </div>
+  <div class="row" style="margin-top:12px">
+    <div class="card" style="text-align:center;cursor:pointer" onclick="nav('settings')"><div class="num">${S.mode==='batch'?'批量':'即时'}</div><div class="small">揭晓模式（点我切换）</div></div>
+    <div class="card" style="text-align:center"><div class="num">${tot}</div><div class="small">总正确率</div></div>
+  </div>
+  <div class="footer-note">
+    <b>题舟</b> · 当前数据包：${esc(EX.name)}。题库为按考试大纲生成的<b>模拟题</b>（非官方真题），以当年教材为准。进度保存在本机浏览器。
+  </div>`;
+}
+
+function renderSubject(skey){
+  const sub=SUBJECTS[skey], chs=chapters(skey);
+  let lastP=null, html='';
+  chs.forEach(ch=>{
+    if(ch.p!==lastP){ html+=`<div class="gname">${esc(ch.p)}</div>`; lastP=ch.p; }
+    const done=ch.qs.filter(q=>S.stats[q.id]&&S.stats[q.id].a).length;
+    const n=ch.qs.length;
+    const st=ch.qs.reduce((acc,q)=>{const t=S.stats[q.id];if(t&&t.a){acc.a+=t.a;acc.c+=t.c;}return acc;},{a:0,c:0});
+    const p=pct(st.a,st.c);
+    html+=`<div class="chap" onclick="startChapter('${skey}',${ch.c})">
+      <div class="nm">${ch.p==='案例分析'?'':('第'+ch.c+'章 ')}${esc(ch.cn)}<div class="bar"><i style="width:${n?done/n*100:0}%"></i></div></div>
+      <div class="st">${done}/${n} 题${st.a?`<br><span class="${accCls(p)}">${p}%</span>`:''}</div>
+    </div>`;
+  });
+  $('#app').innerHTML=`
+  <div class="topbar"><button class="back" onclick="nav('exam')">‹ 返回</button><div class="title">${esc(sub.name)}</div><div class="sp"></div></div>
+  <button class="btn ghost" onclick="startAll('${skey}')">🔀 本科全部乱序刷（${sub.qs.length} 题）</button>
+  ${html}
+  <div class="footer-note">点任意章节开始，从第 1 题顺序刷。做错自动进错题本。</div>`;
+}
+window.startChapter=(skey,c)=>{
+  const ch=chapters(skey).find(x=>x.c===c); if(!ch)return;
+  startSession(ch.qs.map(q=>q.id),{title:(ch.p==='案例分析'?'':'第'+ch.c+'章 ')+ch.cn});
+};
+window.startAll=skey=>{ startSession(shuffle(SUBJECTS[skey].qs.map(q=>q.id)),{title:SUBJECTS[skey].name+' · 乱序',source:skey}); };
+
+function renderQuiz(){
+  const {qs,idx}=SES;
+  const q=qs[idx];
+  const letters=['A','B','C','D','E'];
+  const isMulti=q.t==='multi';
+  const revealed=SES.revealed;
+  const sel=SES.sel||[];
+  let opts=q.o.map((o,i)=>{
+    let cls='opt';
+    if(!revealed){ if(sel.includes(i)) cls+=' sel'; }
+    else{
+      cls+=' lock';
+      if(q.a.includes(i)) cls+=' correct';
+      else if(sel.includes(i)) cls+=' wrongpick';
+      else cls+=' dim';
+    }
+    return `<button class="${cls}" ${revealed?'':'onclick="pick('+i+')"'}><span class="abc">${letters[i]}</span><span>${esc(o)}</span></button>`;
+  }).join('');
+  const multiBtn=(!revealed&&isMulti&&S.mode==='instant')?`<button class="btn" onclick="revealNow()">确认答案</button>`:'';
+  let nextBtn='';
+  if(revealed) nextBtn=`<button class="btn" onclick="nextQ()">${idx+1===qs.length?'查看本次成绩':'下一题 →'}</button>`;
+  else if(S.mode==='batch'||(S.mode==='instant'&&!isMulti)) nextBtn=`<button class="btn" ${sel.length?'':'disabled'} onclick="nextQ()">${nextBatchEdge()?'查看本组成绩 →':'下一题 →'}</button>`;
+  $('#app').innerHTML=`
+  <div class="topbar"><button class="back" onclick="quitQuiz()">‹ 退出</button><div class="title">${esc(SES.title)}</div><div class="sp"></div></div>
+  <div class="progress"><i style="width:${(idx)/qs.length*100}%"></i></div>
+  <div class="mut small" style="margin-bottom:4px">第 ${idx+1}/${qs.length} 题 · ${esc(q.cn)} <span class="badge ${isMulti?'b-multi':'b-single'}">${isMulti?'多选·错选不得分':'单选'}</span>${S.mode==='batch'&&!revealed?'<span class="small">（批量模式：先做完一组再统一揭晓）</span>':''}</div>
+  <div class="card">
+    ${q.bg?`<details class="bgc" open><summary>📋 案例背景材料</summary><div>${esc(q.bg)}</div></details>`:''}
+    <div class="stem">${esc(q.q)}</div>
+    ${figHTML(q)}
+    ${opts}
+    ${revealed?verdictHTML(q,sel):''}
+    ${multiBtn}${nextBtn}
+  </div>`;
+}
+function nextBatchEdge(){ const nextIdx=SES.idx+1; return nextIdx===SES.qs.length||(SES.mode==='batch'&&nextIdx%5===0); }
+function verdictHTML(q,sel){
+  const ok=eqSet(sel,q.a);
+  const ans=q.a.map(i=>'ABCDEF'[i]).join('、');
+  return `<div class="verdict ${ok?'v-ok':'v-bad'}">${ok?'✓ 回答正确':'✗ 回答错误'}　正确答案：${ans}</div>
+  <div class="explain"><span class="ktag">${esc(q.k||'考点')}</span><br>${esc(q.e)}</div>`;
+}
+window.pick=i=>{
+  const q=SES.qs[SES.idx];
+  if(SES.revealed)return;
+  if(q.t==='multi'){ SES.sel=SES.sel||[]; const k=SES.sel.indexOf(i); if(k>=0)SES.sel.splice(k,1); else SES.sel.push(i); SES.sel.sort(); }
+  else SES.sel=[i];
+  SES.selBy=SES.selBy||{}; SES.selBy[SES.idx]=SES.sel.slice();
+  if(S.mode==='instant'&&q.t==='single') revealNow(); else renderQuiz();
+};
+window.revealNow=()=>{
+  const q=SES.qs[SES.idx];
+  if(!SES.sel||!SES.sel.length)return;
+  SES.revealed=true;
+  record(q,SES.sel);
+  renderQuiz();
+};
+window.nextQ=()=>{
+  const nextIdx=SES.idx+1;
+  if(S.mode==='batch'&&(nextIdx===SES.qs.length||nextIdx%5===0)){ renderBatch(nextIdx); return; }
+  if(nextIdx>=SES.qs.length){ renderSummary(); return; }
+  SES.idx=nextIdx; SES.sel=null; SES.revealed=false;
+  renderQuiz();
+};
+
+function renderBatch(endIdx){
+  let okN=0; const items=[];
+  for(let i=SES.batchStart;i<endIdx;i++){
+    const q=SES.qs[i];
+    const sel=(SES.selBy&&SES.selBy[i])||[];
+    const ok=record(q,sel,i); if(ok)okN++;
+    const letters=['A','B','C','D','E'];
+    const opts=q.o.map((o,j)=>{
+      let cls='opt lock';
+      if(q.a.includes(j))cls+=' correct'; else if(sel.includes(j))cls+=' wrongpick'; else cls+=' dim';
+      return `<button class="${cls}"><span class="abc">${letters[j]}</span><span>${esc(o)}</span></button>`;
+    }).join('');
+    const ans=q.a.map(i=>'ABCDEF'[i]).join('、');
+    items.push(`<div class="sum-item" onclick="this.classList.toggle('open')">
+      <div class="sum-head"><span class="mk" style="color:${ok?'var(--ok)':'var(--bad)'}">${ok?'✓':'✗'}</span><span>第${i+1}题 · ${esc(q.q.slice(0,40))}${q.q.length>40?'…':''}</span></div>
+      <div class="sum-body"><div class="mut small" style="margin:10px 0 2px">正确答案：${ans}</div>${q.bg?`<details class="bgc"><summary>📋 背景材料</summary><div>${esc(q.bg)}</div></details>`:''}${figHTML(q)}${opts}<div class="explain"><span class="ktag">${esc(q.k||'考点')}</span><br>${esc(q.e)}</div></div>
+    </div>`);
+  }
+  const total=endIdx-SES.batchStart;
+  const p=pct(total,okN);
+  const isEnd=endIdx>=SES.qs.length;
+  $('#app').innerHTML=`
+  <div class="topbar"><button class="back" onclick="quitQuiz()">‹ 退出</button><div class="title">本组成绩</div><div class="sp"></div></div>
+  <div class="card" style="text-align:center">
+    <div class="num" style="font-size:34px;color:${p>=80?'var(--ok)':p>=60?'var(--amber)':'var(--bad)'}">${okN}/${total}</div>
+    <div class="mut">做错的题已自动收入错题本，点每题展开看解析</div>
+  </div>
+  ${items.join('')}
+  <button class="btn" onclick="continueBatch(${endIdx})">${isEnd?'查看本次成绩 →':'继续下一组 →'}</button>`;
+}
+window.continueBatch=endIdx=>{
+  if(endIdx>=SES.qs.length){ renderSummary(); return; }
+  SES.idx=endIdx; SES.batchStart=endIdx; SES.sel=null; SES.revealed=false;
+  renderQuiz();
+};
+window.quitQuiz=()=>{ SES=null; nav('exam'); };
+
+function renderSummary(){
+  const total=SES.qs.length;
+  let a=0,c=0;
+  SES.qs.forEach(q=>{ const st=S.stats[q.id]; if(st){a+=st.a;c+=st.c;} });
+  let okN=0; const wrongIds=[];
+  SES.qs.forEach((q,i)=>{
+    const ok=(SES.results&&SES.results[i]!==undefined)?SES.results[i]:((SES.selBy&&SES.selBy[i])?eqSet(SES.selBy[i],q.a):false);
+    if(ok)okN++; else wrongIds.push(q.id);
+  });
+  const p=pct(total,okN);
+  $('#app').innerHTML=`
+  <div class="topbar"><button class="back" onclick="nav('exam')">‹ 本科</button><div class="title">本次成绩</div><div class="sp"></div></div>
+  <div class="card" style="text-align:center">
+    <div class="big" style="color:${p>=80?'var(--ok)':p>=60?'var(--amber)':'var(--bad)'}">${p}%</div>
+    <div class="mut">${okN}/${total} 题正确 · 新增错题 ${wrongIds.length} 道</div>
+  </div>
+  ${wrongIds.length?`<button class="btn ghost" onclick="startSession(${JSON.stringify(wrongIds).replace(/"/g,'&quot;')},{title:'错题重做',redo:true})">🔁 立刻重做这 ${wrongIds.length} 道错题</button>`:'<div class="card mut" style="text-align:center">全对，漂亮 👍</div>'}
+  <button class="btn sub" onclick="nav('exam')">返回本科</button>`;
+}
+
+function renderWrong(){
+  const ids=Object.keys(S.wrong).sort((a,b)=>S.wrong[b].localeCompare(S.wrong[a]));
+  let html='';
+  if(!ids.length){
+    html=`<div class="card mut" style="text-align:center;padding:28px">错题本是空的，先去刷几题吧 🙂</div>`;
+  }else{
+    const bySub={jc:[],gs:[]};
+    ids.forEach(id=>{ const q=findQ(id); if(q)bySub[q.s].push(q); });
+    Object.keys(bySub).forEach(skey=>{
+      if(!bySub[skey].length)return;
+      html+=`<div class="gname">${esc(SUBJECTS[skey].name)}</div>`;
+      bySub[skey].forEach(q=>{
+        html+=`<div class="wrongrow"><div class="tx"><b>${esc(q.q.slice(0,60))}${q.q.length>60?'…':''}</b><br><span class="small">${esc(q.cn)} · 做错于 ${S.wrong[q.id]}</span></div><button class="del" onclick="delWrong('${q.id}')">移除</button></div>`;
+      });
+    });
+  }
+  $('#app').innerHTML=`
+  <div class="topbar"><button class="back" onclick="nav('exam')">‹ 返回</button><div class="title">错题本</div><div class="sp"></div></div>
+  ${ids.length?`<button class="btn" onclick="redoWrong()">🔁 错题重做（${ids.length} 题，乱序）</button><div class="small" style="text-align:center;margin-top:6px">重做全对会自动移出错题本</div>`:''}
+  ${html}`;
+}
+window.delWrong=id=>{ delete S.wrong[id]; save(); renderWrong(); };
+window.redoWrong=()=>{ startSession(shuffle(Object.keys(S.wrong)),{title:'错题重做',redo:true}); };
+
+function renderSettings(){
+  $('#app').innerHTML=`
+  <div class="topbar"><button class="back" onclick="nav('home')">‹ 返回</button><div class="title">设置与说明</div><div class="sp"></div></div>
+  <div class="card">
+    <div class="h2">答案揭晓模式</div>
+    <div class="mode">
+      <button class="${S.mode==='batch'?'on':''}" onclick="setMode('batch')">批量揭晓（推荐）</button>
+      <button class="${S.mode==='instant'?'on':''}" onclick="setMode('instant')">做一题看一题</button>
+    </div>
+    <div class="small">批量模式：5 题一组做完统一判分揭晓。先逼自己完成回忆，记忆效果更好（检索练习）。<br>即时模式：你原本设想的"做一题立刻出答案+解析"，适合第一轮熟悉考点。</div>
+  </div>
+  <div class="card">
+    <div class="h2">题库概况</div>
+    ${Object.keys(SUBJECTS).map(k=>{const s=subjStats(k);return `<div class="mut">${esc(SUBJECTS[k].name)}：${s.total} 题 / ${s.chTotal} 章 · 已做 ${s.done} 题</div>`;}).join('')}
+    <div class="small" style="margin-top:6px">想加题：告诉你的 AI 助手"给第 X 章加题"，新题会追加进题库重新生成文件。</div>
+  </div>
+  <div class="card">
+    <div class="h2">数据</div>
+    <button class="btn sub" style="color:var(--bad)" onclick="wipe()">⚠ 清空全部做题数据</button>
+  </div>
+  <div class="footer-note"><b>题舟</b> · 通用刷题引擎 v1 · 当前数据包：<b>${esc(EX.name)}</b>（${EX.subjects.length} 个科目，共 ${EX.subjects.reduce((n,s)=>n+SUBJECTS[s.key].qs.length,0)} 题）。${esc(EX.notice||'')}<br>引擎开源支持多证书：新增一个考试数据包（exam.*.json + 题库文件）即可扩展新证书，见 GitHub 项目页。</div>`;
+}
+window.setMode=m=>{ S.mode=m; save(); renderSettings(); };
+window.wipe=()=>{ if(confirm('确定清空所有做题记录、错题本和统计吗？')){ S={mode:S.mode,stats:{},wrong:{}}; save(); nav('home'); } };
+
+/* ============ 全真模考（规则来自考试数据包） ============ */
+let MK=null, MKTimer=null;
+function renderMockSelect(){
+  const m=S.mocks&&S.mocks[0];
+  const mockCards=EX.subjects.map(s=>{
+    const r=(EX.mock||{})[s.key];
+    if(!r)return'';
+    const parts=[]; if(r.single)parts.push(r.single+' 单选'); if(r.multi)parts.push(r.multi+' 多选'); if(r.case)parts.push(r.case+' 个案例分析');
+    return `<div class="mockcard" onclick="startMock('${s.key}')"><div class="ic">${s.icon||'📘'}</div><div class="tx"><b>${esc(s.name)}</b><div class="mut small">${parts.join(' + ')} · 共 ${r.total||'?'} 题 · ${r.dur||105} 分钟</div></div></div>`;
+  }).join('');
+  $('#app').innerHTML=`
+  <div class="topbar"><button class="back" onclick="nav('exam')">‹ 返回</button><div class="title">全真模考</div><div class="sp"></div></div>
+  <div class="card"><div class="h2">规则说明</div><div class="mut">按真实考试结构随机组卷并计时，到时自动交卷。评分规则：单选 1 分/题；多选与案例分析 2 分/题——<b>错选不得分，少选且所选均正确时每个正确选项得 0.5 分</b>。满分 ${EX.totalScore} 分，${EX.passScore} 分及格。模考中答案不即时揭晓，交卷后统一出分。</div></div>
+  ${m?`<div class="card"><div class="mut">最近一次模考：${esc((EX.subjects.find(s=>s.key===m.subject)||{}).short||m.subject)} <b>${m.score} 分</b> · ${m.pass?'✓ 达到合格线':'未达 '+EX.passScore+' 分合格线'} · ${m.date}</div></div>`:''}
+  ${mockCards}
+  <div class="footer-note">建议在电脑上做模考以模拟机考手感。中途关闭页面进度会保留，可从首页"继续模考"恢复；切出页面计时不会暂停，请专注作答。</div>`;
+}
+window.startMockSelect=function(){ nav('mockSelect'); };
+window.startMock=function(s){
+  const r=(EX.mock||{})[s];
+  if(!r){ alert('该科目未配置模考规则'); return; }
+  const singles=shuffle(SUBJECTS[s].qs.filter(q=>q.t==='single'&&!q.bg)).slice(0,r.single||0);
+  const multis=shuffle(SUBJECTS[s].qs.filter(q=>q.t==='multi'&&!q.bg)).slice(0,r.multi||0);
+  let cases=[];
+  if(r.case){
+    const cq=SUBJECTS[s].qs.filter(q=>q.bg);
+    const keys=[...new Set(cq.map(q=>q.p+'|'+q.c))].sort(()=>Math.random()-0.5).slice(0,r.case);
+    cases=cq.filter(q=>keys.includes(q.p+'|'+q.c));
+  }
+  const qs=[...singles,...multis,...cases];
+  if(qs.length<r.total){ alert('题库不足，无法组卷（还缺 '+(r.total-qs.length)+' 题，请先扩充题库）'); return; }
+  MK={s,qs,idx:0,selBy:{},startedAt:Date.now(),durMs:r.dur*60*1000,done:false};
+  S.mockLive={ids:qs.map(q=>q.id),idx:0,selBy:{},startedAt:MK.startedAt,durMs:MK.durMs}; save();
+  clearInterval(MKTimer); MKTimer=setInterval(tickMock,1000);
+  nav('mockRun');
+};
+window.resumeMock=function(){
+  const L=S.mockLive; if(!L)return;
+  const qs=L.ids.map(findQ).filter(Boolean);
+  if(!qs.length){ delete S.mockLive; save(); nav('home'); return; }
+  MK={s:qs[0].s,qs,idx:L.idx||0,selBy:L.selBy||{},startedAt:L.startedAt,durMs:L.durMs||105*60*1000,done:false};
+  if(Date.now()-MK.startedAt>=MK.durMs){ finishMock(true); return; }
+  clearInterval(MKTimer); MKTimer=setInterval(tickMock,1000);
+  nav('mockRun');
+};
+function fmtLeft(ms){ ms=Math.max(0,ms); const t=Math.floor(ms/1000),h=Math.floor(t/3600),m=Math.floor((t%3600)/60),s=t%60; return (h>0?h+':':'')+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0'); }
+function tickMock(){
+  if(!MK||MK.done)return;
+  if(MK.durMs-(Date.now()-MK.startedAt)<=0){ finishMock(true); }
+}
+function renderMockRun(){
+  const q=MK.qs[MK.idx], letters=['A','B','C','D','E'];
+  const sel=MK.selBy[MK.idx]||[];
+  const left=MK.durMs-(Date.now()-MK.startedAt);
+  const isMulti=q.t==='multi';
+  const opts=q.o.map((o,i)=>`<button class="opt${sel.includes(i)?' sel':''}" onclick="mockPick(${i})"><span class="abc">${letters[i]}</span><span>${esc(o)}</span></button>`).join('');
+  const marked=MK.qs.map((qq,i)=>`<b class="${MK.selBy[i]&&MK.selBy[i].length?'ans':''}${i===MK.idx?' cur':''}" onclick="mockJump(${i})">${i+1}</b>`).join('');
+  $('#app').innerHTML=`
+  <div class="topbar"><button class="back" onclick="quitMock()">‹ 退出</button><div class="title">模考 · ${SUBJECTS[MK.s].short}</div><div class="timer" style="color:${left<10*60*1000?'var(--bad)':'var(--acc)'}">${fmtLeft(left)}</div></div>
+  <div class="progress"><i style="width:${(MK.idx+1)/MK.qs.length*100}%"></i></div>
+  <div class="mut small" style="margin-bottom:4px">第 ${MK.idx+1}/${MK.qs.length} 题 · ${esc(q.cn||'')} <span class="badge ${isMulti?'b-multi':'b-single'}">${q.bg?'案例分析 · 不定项':(isMulti?'多选':'单选')}</span></div>
+  <div class="card">
+    ${q.bg?`<details class="bgc" open><summary>📋 案例背景材料</summary><div>${esc(q.bg)}</div></details>`:''}
+    <div class="stem">${esc(q.q)}</div>
+    ${figHTML(q)}
+    ${opts}
+  </div>
+  <div class="row">
+    <button class="btn sub" style="margin-top:0" ${MK.idx===0?'disabled':''} onclick="mockJump(${MK.idx-1})">‹ 上一题</button>
+    <button class="btn sub" style="margin-top:0" ${MK.idx===MK.qs.length-1?'disabled':''} onclick="mockJump(${MK.idx+1})">下一题 ›</button>
+  </div>
+  <div class="card" style="margin-top:10px"><div class="small" style="cursor:pointer;font-weight:700" onclick="const g=document.getElementById('ag');g.style.display=g.style.display==='none'?'flex':'none'">⊞ 答题卡（点开跳转任意题 / 查看作答情况）</div><div class="ansgrid" id="ag" style="display:none">${marked}</div></div>
+  <div class="small" style="text-align:center;margin-top:6px">${isMulti||q.bg?'错选不得分，少选每个正确项得 0.5 分 · 答案未揭晓，交卷后统一出分':''}</div>
+  <button class="btn" onclick="submitMockConfirm()">交卷</button>`;
+}
+window.mockPick=function(i){
+  const q=MK.qs[MK.idx];
+  if(q.t==='multi'){ const cur=(MK.selBy[MK.idx]||[]).slice(); const k=cur.indexOf(i); if(k>=0)cur.splice(k,1); else cur.push(i); cur.sort(); MK.selBy[MK.idx]=cur; }
+  else MK.selBy[MK.idx]=[i];
+  S.mockLive.selBy=MK.selBy; S.mockLive.idx=MK.idx; save();
+  renderMockRun();
+};
+window.mockJump=function(i){ if(!MK||i<0||i>=MK.qs.length)return; MK.idx=i; S.mockLive.idx=i; save(); renderMockRun(); };
+window.quitMock=function(){
+  if(confirm('模考进行中。退出将保留进度（计时继续），可从本科页"继续模考"恢复。确认退出？')){ clearInterval(MKTimer); MK=null; nav('exam'); }
+};
+window.submitMockConfirm=function(){ if(confirm('确认交卷？未作答的题目按 0 分计。')) finishMock(false); };
+function scoreOne(q,sel){
+  if(!sel||!sel.length)return 0;
+  if(q.bg||q.t==='multi'){ /* 案例分析小题与多选：一律2分，错选不得分，少选每个正确项0.5分 */
+    if(sel.some(i=>!q.a.includes(i))) return 0;
+    if(sel.length===q.a.length) return 2;
+    return 0.5*sel.length;
+  }
+  return sel.length===1&&sel[0]===q.a[0]?1:0;
+}
+function finishMock(auto){
+  if(!MK)return;
+  MK.done=true; clearInterval(MKTimer);
+  let score=0; const det={single:[0,0],multi:[0,0],case:[0,0]}; const wrongIds=[];
+  MK.qs.forEach((q,i)=>{
+    const sel=MK.selBy[i]||[]; const sc=scoreOne(q,sel); score+=sc;
+    const kind=q.bg?'case':q.t;
+    det[kind][0]+=sc; det[kind][1]+=(q.bg||q.t==='multi')?2:1;
+    if(!sel.length||!eqSet(sel,q.a)) wrongIds.push(q.id);
+  });
+  const rec={date:todayISO(),subject:MK.s,score:Math.round(score*10)/10,pass:score>=EX.passScore,total:MK.qs.length,
+    s1:det.single[0].toFixed(1)+'/'+det.single[1], s2:det.multi[0].toFixed(1)+'/'+det.multi[1], s3:det.case[0].toFixed(1)+'/'+det.case[1]};
+  S.mocks.unshift({date:rec.date,subject:rec.subject,score:rec.score,pass:rec.pass}); S.mocks=S.mocks.slice(0,10);
+  MK._wrongIds=wrongIds; delete S.mockLive; save();
+  $('#app').innerHTML=`
+  <div class="topbar"><button class="back" onclick="nav('exam')">‹ 本科</button><div class="title">模考成绩</div><div class="sp"></div></div>
+  ${auto?'<div class="card mut" style="text-align:center">⏰ 考试时间到，已自动交卷</div>':''}
+  <div class="card" style="text-align:center">
+    <div class="big" style="color:${rec.pass?'var(--ok)':'var(--bad)'}">${rec.score}<span style="font-size:16px"> / ${EX.totalScore}</span></div>
+    <div class="mut">${rec.pass?'✓ 达到合格线 '+EX.passScore+' 分，保持节奏':'距合格线 '+EX.passScore+' 分还差 '+(EX.passScore-rec.score).toFixed(1)+' 分，错题就是提分地图'} · ${esc((EX.subjects.find(s=>s.key===MK.s)||{}).short||MK.s)} · ${rec.date}</div>
+    <div class="row" style="margin-top:10px;text-align:center">
+      <div style="flex:1"><div class="num" style="font-size:16px">${rec.s1}</div><div class="small">单选 得分/满分</div></div>
+      <div style="flex:1"><div class="num" style="font-size:16px">${rec.s2}</div><div class="small">多选 得分/满分</div></div>
+      ${MK.s==='gs'?`<div style="flex:1"><div class="num" style="font-size:16px">${rec.s3}</div><div class="small">案例 得分/满分</div></div>`:''}
+    </div>
+  </div>
+  <button class="btn ghost" onclick="showMockWrong()">看错题与未答题解析（${wrongIds.length} 题）</button>
+  <button class="btn sub" onclick="nav('exam')">返回本科</button>
+  <div id="mockWrongBox"></div>`;
+}
+window.showMockWrong=function(){
+  if(!MK||!MK._wrongIds)return;
+  const items=MK._wrongIds.map(id=>{
+    const q=findQ(id); if(!q)return'';
+    const letters=['A','B','C','D','E'];
+    const opts=q.o.map((o,j)=>`<button class="opt lock ${q.a.includes(j)?'correct':'dim'}"><span class="abc">${letters[j]}</span><span>${esc(o)}</span></button>`).join('');
+    return `<div class="card"><div class="mut small">${esc(q.cn||'')}</div>
+    ${q.bg?`<details class="bgc"><summary>📋 背景材料</summary><div>${esc(q.bg)}</div></details>`:''}
+    <div class="stem">${esc(q.q)}</div>${figHTML(q)}${opts}
+    <div class="verdict v-ok">正确答案：${q.a.map(i=>letters[i]).join('、')}</div>
+    <div class="explain"><span class="ktag">${esc(q.k||'考点')}</span><br>${esc(q.e)}</div></div>`;
+  }).join('');
+  document.getElementById('mockWrongBox').innerHTML=items||'<div class="card mut" style="text-align:center">无错题，全对！</div>';
+};
+
+/* 启动 */
+renderHome();
+</script>
+</body>
+</html>
