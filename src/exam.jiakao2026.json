@@ -23,7 +23,8 @@
       "multi": 0,
       "case": 0,
       "total": 100,
-      "dur": 45
+      "dur": 45,
+      "singlePts": 1
     }
   },
   "sort": 20

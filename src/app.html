@@ -209,35 +209,35 @@ const CATALOG=[
    {name:'机动车驾驶考试（科目四·安全文明）',icon:'🛡️',st:'ready',pack:'jiakao4'}]},
  {cat:'📊 经济职称', exams:[
    {name:'中级经济师（工商管理）',icon:'🎓',st:'ready',pack:'jjjs2026'},
-   {name:'中级经济师（人力资源/金融/财税等）',icon:'🎓',st:'soon',note:'公共科目题库可共用，专业科目数据包筹备中'},
-   {name:'初级经济师',icon:'🎓',st:'soon'}]},
+   {name:'中级经济师（人力资源方向）',icon:'🎓',st:'ready',pack:'jjjsrl'},
+   {name:'初级经济师',icon:'🎓',st:'ready',pack:'cjj'}]},
  {cat:'💰 财会金融', exams:[
    {name:'初级会计职称',icon:'🧾',st:'ready',pack:'cjk2026'},
-   {name:'中级会计职称',icon:'🧮',st:'soon'},
-   {name:'注册会计师（CPA）',icon:'📈',st:'soon'},
-   {name:'税务师',icon:'🧰',st:'soon'},
-   {name:'银行/证券/基金从业',icon:'🏦',st:'soon'}]},
+   {name:'中级会计职称',icon:'🧮',st:'ready',pack:'zjkj'},
+   {name:'注册会计师（CPA·会计）',icon:'📈',st:'ready',pack:'cpa'},
+   {name:'税务师',icon:'🧰',st:'ready',pack:'sws'},
+   {name:'银行/证券/基金从业',icon:'🏦',st:'ready',pack:'yhjr'}]},
  {cat:'🏗️ 建筑工程', exams:[
-   {name:'一级建造师',icon:'🏗️',st:'soon'},
-   {name:'二级建造师',icon:'🏗️',st:'soon'},
-   {name:'一级造价工程师',icon:'📐',st:'soon'},
-   {name:'监理工程师',icon:'📋',st:'soon'},
-   {name:'注册消防工程师',icon:'🧯',st:'soon'},
-   {name:'注册安全工程师',icon:'🦺',st:'soon'}]},
+   {name:'一级建造师',icon:'🏗️',st:'ready',pack:'yj'},
+   {name:'二级建造师',icon:'🏗️',st:'ready',pack:'ej'},
+   {name:'一级造价工程师',icon:'📐',st:'ready',pack:'zaojia'},
+   {name:'监理工程师',icon:'📋',st:'ready',pack:'jianli'},
+   {name:'注册消防工程师',icon:'🧯',st:'ready',pack:'xiaofang'},
+   {name:'注册安全工程师',icon:'🦺',st:'ready',pack:'zhuanan'}]},
  {cat:'👩‍🏫 教师资格', exams:[
    {name:'教师资格证（综合素质）',icon:'🏫',st:'ready',pack:'jz2026'},
-   {name:'教师招聘（教招）',icon:'📖',st:'soon'}]},
+   {name:'教师招聘（教招）',icon:'📖',st:'ready',pack:'jiaozhao'}]},
  {cat:'🏛️ 公职编制', exams:[
-   {name:'公务员（行测·申论）',icon:'🏛️',st:'soon'},
-   {name:'事业单位联考',icon:'🏢',st:'soon'}]},
+   {name:'公务员考试（行测）',icon:'🏛️',st:'ready',pack:'xingce'},
+   {name:'事业单位联考（公基）',icon:'🏢',st:'ready',pack:'shiye'}]},
  {cat:'💊 医药健康', exams:[
-   {name:'执业药师（药学/中药）',icon:'💊',st:'soon'},
-   {name:'健康管理师',icon:'🩺',st:'soon'}]},
+   {name:'执业药师（药学类）',icon:'💊',st:'ready',pack:'yaoshi'},
+   {name:'健康管理师',icon:'🩺',st:'ready',pack:'jiankang'}]},
  {cat:'💻 计算机软考', exams:[
-   {name:'软考（系统集成/项目管理师等）',icon:'💻',st:'soon'},
-   {name:'计算机等级考试（NCRE）',icon:'⌨️',st:'soon'}]},
+   {name:'软考（系统集成项目管理工程师）',icon:'💻',st:'ready',pack:'ruankao'},
+   {name:'计算机等级考试（二级 MS Office）',icon:'⌨️',st:'ready',pack:'ncre'}]},
  {cat:'⚖️ 法律', exams:[
-   {name:'法律职业资格（客观题）',icon:'⚖️',st:'soon'}]},
+   {name:'法律职业资格（客观题）',icon:'⚖️',st:'ready',pack:'fakao'}]},
 ];
 let _toastT=null;
 function toast(msg){
@@ -776,7 +776,10 @@ function finishMock(auto){
     det[kind][0]+=sc; det[kind][1]+=(q.bg||q.t==='multi')?2:singlePts;
     if(!sel.length||!eqSet(sel,q.a)) wrongIds.push(q.id);
   });
-  const rec={date:todayISO(),subject:MK.s,score:Math.round(score*10)/10,pass:score>=EX.passScore,total:MK.qs.length,
+  let rawFull=0; det.k=det.k; Object.keys(det).forEach(k=>{rawFull+=det[k][1];});
+  let finalScore=score;
+  if(EX.percentMode&&rawFull>0){ finalScore=Math.round(score/rawFull*100); det.single[1]=Math.round(det.single[1]/rawFull*100); det.multi[1]=Math.round(det.multi[1]/rawFull*100); det.case[1]=Math.round(det.case[1]/rawFull*100); }
+  const rec={date:todayISO(),subject:MK.s,score:finalScore,pass:finalScore>=EX.passScore,total:MK.qs.length,
     s1:det.single[0].toFixed(1)+'/'+det.single[1], s2:det.multi[0].toFixed(1)+'/'+det.multi[1], s3:det.case[0].toFixed(1)+'/'+det.case[1]};
   S.mocks.unshift({date:rec.date,subject:rec.subject,score:rec.score,pass:rec.pass}); S.mocks=S.mocks.slice(0,10);
   MK._wrongIds=wrongIds; delete S.mockLive; save();
