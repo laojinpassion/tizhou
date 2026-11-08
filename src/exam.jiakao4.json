@@ -1,0 +1,31 @@
+{
+  "id": "jiakao4",
+  "name": "机动车驾驶考试（科目四·安全文明）",
+  "icon": "🛡️",
+  "cat": "驾驶驾考",
+  "dateLabel": "科目四 · 随约随考（各地车管所）",
+  "examDate": null,
+  "totalScore": 100,
+  "passScore": 90,
+  "notice": "科目四机考：50 题（情景判断与选择），30 分钟，90 分及以上合格。本数据包为按现行安全文明驾驶常识整理的模拟题。",
+  "subjects": [
+    {
+      "key": "jk4",
+      "name": "科目四 · 安全文明驾驶常识",
+      "short": "科目四",
+      "tag": "必考",
+      "icon": "🛡️"
+    }
+  ],
+  "mock": {
+    "jk4": {
+      "single": 50,
+      "multi": 0,
+      "case": 0,
+      "total": 50,
+      "dur": 30,
+      "singlePts": 2
+    }
+  },
+  "sort": 21
+}

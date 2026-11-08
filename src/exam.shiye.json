@@ -1,0 +1,31 @@
+{
+  "id": "shiye",
+  "name": "事业单位联考（公基）",
+  "icon": "🏢",
+  "cat": "公职编制",
+  "sort": 62,
+  "dateLabel": "考试时间以当年官方通知为准",
+  "examDate": null,
+  "percentMode": true,
+  "totalScore": 100,
+  "passScore": 60,
+  "notice": "本包为事业单位联考公共基础知识精简模拟卷，覆盖政治、法律、经济、管理、人文科技与公文写作。",
+  "subjects": [
+    {
+      "key": "shiye",
+      "name": "公共基础知识",
+      "short": "公基",
+      "tag": "精简模拟",
+      "icon": "🏢"
+    }
+  ],
+  "mock": {
+    "shiye": {
+      "single": 20,
+      "multi": 5,
+      "case": 0,
+      "total": 25,
+      "dur": 35
+    }
+  }
+}

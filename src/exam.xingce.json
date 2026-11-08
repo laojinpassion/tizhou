@@ -1,0 +1,31 @@
+{
+  "id": "xingce",
+  "name": "公务员考试（行测）",
+  "icon": "🏛️",
+  "cat": "公职编制",
+  "sort": 61,
+  "dateLabel": "考试时间以当年官方通知为准",
+  "examDate": null,
+  "percentMode": true,
+  "totalScore": 100,
+  "passScore": 60,
+  "notice": "本包为公务员行测精简模拟卷，覆盖常识判断、言语理解、判断推理、资料分析高频题型（数量关系类以文字化题目呈现）。",
+  "subjects": [
+    {
+      "key": "xingce",
+      "name": "行政职业能力测验",
+      "short": "行测",
+      "tag": "精简模拟",
+      "icon": "🏛️"
+    }
+  ],
+  "mock": {
+    "xingce": {
+      "single": 60,
+      "multi": 20,
+      "case": 0,
+      "total": 80,
+      "dur": 90
+    }
+  }
+}

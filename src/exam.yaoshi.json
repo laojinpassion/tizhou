@@ -1,0 +1,31 @@
+{
+  "id": "yaoshi",
+  "name": "执业药师（药学类）",
+  "icon": "💊",
+  "cat": "医药健康",
+  "sort": 71,
+  "dateLabel": "考试时间以当年官方通知为准",
+  "examDate": null,
+  "percentMode": true,
+  "totalScore": 100,
+  "passScore": 60,
+  "notice": "本包为执业药师（药学类）精简模拟卷，覆盖药事管理与法规、药学基础知识；中药类数据包筹备中。",
+  "subjects": [
+    {
+      "key": "yaoshi",
+      "name": "药事管理与药学基础",
+      "short": "药事管理与药学基础",
+      "tag": "精简模拟",
+      "icon": "💊"
+    }
+  ],
+  "mock": {
+    "yaoshi": {
+      "single": 60,
+      "multi": 20,
+      "case": 0,
+      "total": 80,
+      "dur": 90
+    }
+  }
+}

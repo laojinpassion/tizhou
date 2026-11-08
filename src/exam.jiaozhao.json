@@ -1,0 +1,31 @@
+{
+  "id": "jiaozhao",
+  "name": "教师招聘（教招）",
+  "icon": "📖",
+  "cat": "教师资格",
+  "sort": 51,
+  "dateLabel": "考试时间以当年官方通知为准",
+  "examDate": null,
+  "percentMode": true,
+  "totalScore": 100,
+  "passScore": 60,
+  "notice": "本包为教师招聘考试精简模拟卷，覆盖教育学、心理学、法规与教法高频考点。",
+  "subjects": [
+    {
+      "key": "jiaozhao",
+      "name": "教育综合知识",
+      "short": "教育综合",
+      "tag": "精简模拟",
+      "icon": "📖"
+    }
+  ],
+  "mock": {
+    "jiaozhao": {
+      "single": 22,
+      "multi": 5,
+      "case": 0,
+      "total": 27,
+      "dur": 35
+    }
+  }
+}

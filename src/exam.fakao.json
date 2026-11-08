@@ -1,0 +1,31 @@
+{
+  "id": "fakao",
+  "name": "法律职业资格（客观题）",
+  "icon": "⚖️",
+  "cat": "法律",
+  "sort": 91,
+  "dateLabel": "考试时间以当年官方通知为准",
+  "examDate": null,
+  "percentMode": true,
+  "totalScore": 100,
+  "passScore": 60,
+  "notice": "本包为法律职业资格客观题精简模拟卷，覆盖刑法、民法、刑诉、民诉、行政法、商经法、理论法高频考点；仅供学习参考。",
+  "subjects": [
+    {
+      "key": "fakao",
+      "name": "法律职业综合（客观题）",
+      "short": "法考客观题",
+      "tag": "精简模拟",
+      "icon": "⚖️"
+    }
+  ],
+  "mock": {
+    "fakao": {
+      "single": 22,
+      "multi": 5,
+      "case": 0,
+      "total": 27,
+      "dur": 35
+    }
+  }
+}

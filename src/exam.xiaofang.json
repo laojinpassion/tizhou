@@ -1,0 +1,31 @@
+{
+  "id": "xiaofang",
+  "name": "注册消防工程师",
+  "icon": "🧯",
+  "cat": "建筑工程",
+  "sort": 45,
+  "dateLabel": "考试时间以当年官方通知为准",
+  "examDate": null,
+  "percentMode": true,
+  "totalScore": 100,
+  "passScore": 60,
+  "notice": "本包为一级/二级注册消防工程师精简模拟卷，覆盖消防法规、建筑防火、设施等高频考点。",
+  "subjects": [
+    {
+      "key": "xiaofang",
+      "name": "消防安全技术综合",
+      "short": "消防安全综合",
+      "tag": "精简模拟",
+      "icon": "🧯"
+    }
+  ],
+  "mock": {
+    "xiaofang": {
+      "single": 20,
+      "multi": 5,
+      "case": 0,
+      "total": 25,
+      "dur": 35
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "id": "ncre",
+  "name": "计算机等级考试（二级 MS Office）",
+  "icon": "⌨️",
+  "cat": "计算机软考",
+  "sort": 82,
+  "dateLabel": "考试时间以当年官方通知为准",
+  "examDate": null,
+  "percentMode": true,
+  "totalScore": 100,
+  "passScore": 60,
+  "notice": "本包为计算机二级（MS Office 高级应用）精简模拟卷，覆盖计算机基础、Office 操作与公共基础高频考点。",
+  "subjects": [
+    {
+      "key": "ncre",
+      "name": "计算机基础与Office高级应用",
+      "short": "计算机基础与Office",
+      "tag": "精简模拟",
+      "icon": "⌨️"
+    }
+  ],
+  "mock": {
+    "ncre": {
+      "single": 22,
+      "multi": 3,
+      "case": 0,
+      "total": 25,
+      "dur": 35
+    }
+  }
+}

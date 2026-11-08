@@ -1,0 +1,38 @@
+{
+  "id": "jjjsrl",
+  "name": "中级经济师（人力资源方向）",
+  "icon": "🎓",
+  "cat": "经济职称",
+  "sort": 11,
+  "dateLabel": "考试时间以当年官方通知为准",
+  "examDate": null,
+  "percentMode": true,
+  "totalScore": 100,
+  "passScore": 60,
+  "notice": "本包与中级经济师公共科目（经济基础）配套，覆盖人力资源管理专业高频考点。",
+  "subjects": [
+    {
+      "key": "rl",
+      "name": "人力资源管理专业知识和实务",
+      "short": "人力资源实务",
+      "tag": "精简模拟",
+      "icon": "🎓"
+    }
+  ],
+  "mock": {
+    "jjjsrl": {
+      "single": 25,
+      "multi": 5,
+      "case": 0,
+      "total": 30,
+      "dur": 40
+    },
+    "rl": {
+      "single": 60,
+      "multi": 20,
+      "case": 0,
+      "total": 80,
+      "dur": 90
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "id": "yhjr",
+  "name": "银行/证券/基金从业",
+  "icon": "🏦",
+  "cat": "财会金融",
+  "sort": 34,
+  "dateLabel": "考试时间以当年官方通知为准",
+  "examDate": null,
+  "percentMode": true,
+  "totalScore": 100,
+  "passScore": 60,
+  "notice": "本包覆盖银行、证券、基金从业资格考试共通的高频考点（金融基础、法律法规、职业道德）。",
+  "subjects": [
+    {
+      "key": "yhjr",
+      "name": "金融从业基础",
+      "short": "金融基础",
+      "tag": "精简模拟",
+      "icon": "🏦"
+    }
+  ],
+  "mock": {
+    "yhjr": {
+      "single": 60,
+      "multi": 20,
+      "case": 0,
+      "total": 80,
+      "dur": 90
+    }
+  }
+}

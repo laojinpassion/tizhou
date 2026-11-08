@@ -1,0 +1,31 @@
+{
+  "id": "yj",
+  "name": "一级建造师",
+  "icon": "🏗️",
+  "cat": "建筑工程",
+  "sort": 41,
+  "dateLabel": "考试时间以当年官方通知为准",
+  "examDate": null,
+  "percentMode": true,
+  "totalScore": 100,
+  "passScore": 60,
+  "notice": "本包为一级建造师精简模拟卷，覆盖建设法规、项目管理、经济与实务高频考点；以当年考纲为准。",
+  "subjects": [
+    {
+      "key": "yj",
+      "name": "建设工程法规与项目管理",
+      "short": "法规与项目管理",
+      "tag": "精简模拟",
+      "icon": "🏗️"
+    }
+  ],
+  "mock": {
+    "yj": {
+      "single": 30,
+      "multi": 6,
+      "case": 0,
+      "total": 36,
+      "dur": 35
+    }
+  }
+}

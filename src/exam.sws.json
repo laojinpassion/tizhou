@@ -1,0 +1,31 @@
+{
+  "id": "sws",
+  "name": "税务师",
+  "icon": "🧰",
+  "cat": "财会金融",
+  "sort": 33,
+  "dateLabel": "考试时间以当年官方通知为准",
+  "examDate": null,
+  "percentMode": true,
+  "totalScore": 100,
+  "passScore": 60,
+  "notice": "本包为税务师精简模拟卷，覆盖增值税、企业所得税、个人所得税等高频税种考点；以当年教材为准。",
+  "subjects": [
+    {
+      "key": "sws",
+      "name": "税法与涉税服务基础",
+      "short": "税法基础",
+      "tag": "精简模拟",
+      "icon": "🧰"
+    }
+  ],
+  "mock": {
+    "sws": {
+      "single": 60,
+      "multi": 20,
+      "case": 0,
+      "total": 80,
+      "dur": 90
+    }
+  }
+}

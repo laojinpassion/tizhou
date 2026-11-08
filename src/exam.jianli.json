@@ -1,0 +1,31 @@
+{
+  "id": "jianli",
+  "name": "监理工程师",
+  "icon": "📋",
+  "cat": "建筑工程",
+  "sort": 44,
+  "dateLabel": "考试时间以当年官方通知为准",
+  "examDate": null,
+  "percentMode": true,
+  "totalScore": 100,
+  "passScore": 60,
+  "notice": "本包为监理工程师精简模拟卷，覆盖监理概论、合同管理、质量控制高频考点。",
+  "subjects": [
+    {
+      "key": "jianli",
+      "name": "建设工程监理概论与法规",
+      "short": "监理概论与法规",
+      "tag": "精简模拟",
+      "icon": "📋"
+    }
+  ],
+  "mock": {
+    "jianli": {
+      "single": 20,
+      "multi": 5,
+      "case": 0,
+      "total": 25,
+      "dur": 35
+    }
+  }
+}

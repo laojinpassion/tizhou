@@ -1,0 +1,31 @@
+{
+  "id": "ruankao",
+  "name": "软考（系统集成项目管理工程师）",
+  "icon": "💻",
+  "cat": "计算机软考",
+  "sort": 81,
+  "dateLabel": "考试时间以当年官方通知为准",
+  "examDate": null,
+  "percentMode": true,
+  "totalScore": 100,
+  "passScore": 60,
+  "notice": "本包为软考中级（系统集成项目管理工程师）精简模拟卷，覆盖信息化、项目管理十大知识域高频考点。",
+  "subjects": [
+    {
+      "key": "ruankao",
+      "name": "系统集成项目管理基础",
+      "short": "项目管理基础",
+      "tag": "精简模拟",
+      "icon": "💻"
+    }
+  ],
+  "mock": {
+    "ruankao": {
+      "single": 60,
+      "multi": 20,
+      "case": 0,
+      "total": 80,
+      "dur": 90
+    }
+  }
+}

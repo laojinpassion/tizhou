@@ -1,0 +1,31 @@
+{
+  "id": "cpa",
+  "name": "注册会计师（CPA·会计）",
+  "icon": "📈",
+  "cat": "财会金融",
+  "sort": 32,
+  "dateLabel": "考试时间以当年官方通知为准",
+  "examDate": null,
+  "percentMode": true,
+  "totalScore": 100,
+  "passScore": 60,
+  "notice": "本包为CPA《会计》科目精简模拟卷（40题/百分制），覆盖长期股权投资、金融工具、收入、合并报表等高频考点；完整备考请以官方教材为准。",
+  "subjects": [
+    {
+      "key": "cpa",
+      "name": "会计（CPA）",
+      "short": "CPA会计",
+      "tag": "精简模拟",
+      "icon": "📈"
+    }
+  ],
+  "mock": {
+    "cpa": {
+      "single": 60,
+      "multi": 20,
+      "case": 0,
+      "total": 80,
+      "dur": 120
+    }
+  }
+}

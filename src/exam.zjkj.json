@@ -1,0 +1,31 @@
+{
+  "id": "zjkj",
+  "name": "中级会计职称",
+  "icon": "🧮",
+  "cat": "财会金融",
+  "sort": 31,
+  "dateLabel": "考试时间以当年官方通知为准",
+  "examDate": null,
+  "percentMode": true,
+  "totalScore": 100,
+  "passScore": 60,
+  "notice": "本包为《中级会计实务》模拟卷（题型简化为单选+多选），满分100分、60分及格；以当年官方教材与考纲为准。",
+  "subjects": [
+    {
+      "key": "zj",
+      "name": "中级会计实务",
+      "short": "中级实务",
+      "tag": "精简模拟",
+      "icon": "🧮"
+    }
+  ],
+  "mock": {
+    "zj": {
+      "single": 60,
+      "multi": 20,
+      "case": 0,
+      "total": 80,
+      "dur": 120
+    }
+  }
+}

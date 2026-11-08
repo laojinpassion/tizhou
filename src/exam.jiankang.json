@@ -1,0 +1,31 @@
+{
+  "id": "jiankang",
+  "name": "健康管理师",
+  "icon": "🩺",
+  "cat": "医药健康",
+  "sort": 72,
+  "dateLabel": "考试时间以当年官方通知为准",
+  "examDate": null,
+  "percentMode": true,
+  "totalScore": 100,
+  "passScore": 60,
+  "notice": "本包为健康管理师精简模拟卷，覆盖健康监测、评估、干预与慢病管理高频考点。",
+  "subjects": [
+    {
+      "key": "jiankang",
+      "name": "健康管理基础知识",
+      "short": "健康管理基础",
+      "tag": "精简模拟",
+      "icon": "🩺"
+    }
+  ],
+  "mock": {
+    "jiankang": {
+      "single": 60,
+      "multi": 20,
+      "case": 0,
+      "total": 80,
+      "dur": 90
+    }
+  }
+}

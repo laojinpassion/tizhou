@@ -1,0 +1,31 @@
+{
+  "id": "cjj",
+  "name": "初级经济师（经济基础知识）",
+  "icon": "🎓",
+  "cat": "经济职称",
+  "sort": 12,
+  "dateLabel": "考试时间以当年官方通知为准",
+  "examDate": null,
+  "percentMode": true,
+  "totalScore": 100,
+  "passScore": 60,
+  "notice": "本包为初级经济师《经济基础知识》精简模拟卷，覆盖六大部分高频考点；初级专业科目数据包筹备中。",
+  "subjects": [
+    {
+      "key": "cjj",
+      "name": "经济基础知识（初级）",
+      "short": "经济基础（初级）",
+      "tag": "精简模拟",
+      "icon": "🎓"
+    }
+  ],
+  "mock": {
+    "cjj": {
+      "single": 27,
+      "multi": 6,
+      "case": 0,
+      "total": 33,
+      "dur": 35
+    }
+  }
+}

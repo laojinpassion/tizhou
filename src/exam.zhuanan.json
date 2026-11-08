@@ -1,0 +1,31 @@
+{
+  "id": "zhuanan",
+  "name": "注册安全工程师",
+  "icon": "🦺",
+  "cat": "建筑工程",
+  "sort": 46,
+  "dateLabel": "考试时间以当年官方通知为准",
+  "examDate": null,
+  "percentMode": true,
+  "totalScore": 100,
+  "passScore": 60,
+  "notice": "本包为注册安全工程师精简模拟卷，覆盖安全生产法规、管理、技术高频考点。",
+  "subjects": [
+    {
+      "key": "zhuanan",
+      "name": "安全生产法规与管理",
+      "short": "安全生产法规管理",
+      "tag": "精简模拟",
+      "icon": "🦺"
+    }
+  ],
+  "mock": {
+    "zhuanan": {
+      "single": 20,
+      "multi": 4,
+      "case": 0,
+      "total": 24,
+      "dur": 35
+    }
+  }
+}
