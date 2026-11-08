@@ -21,11 +21,11 @@
   ],
   "mock": {
     "ncre": {
-      "single": 22,
-      "multi": 3,
+      "single": 60,
+      "multi": 20,
       "case": 0,
-      "total": 25,
-      "dur": 35
+      "total": 80,
+      "dur": 90
     }
   }
 }
