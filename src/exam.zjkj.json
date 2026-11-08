@@ -15,14 +15,14 @@
       "key": "zj",
       "name": "中级会计实务",
       "short": "中级实务",
-      "tag": "精简模拟",
+      "tag": "全章题库",
       "icon": "🧮"
     }
   ],
   "mock": {
     "zj": {
-      "single": 60,
-      "multi": 20,
+      "single": 61,
+      "multi": 19,
       "case": 0,
       "total": 80,
       "dur": 120

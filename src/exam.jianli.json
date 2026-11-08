@@ -9,13 +9,13 @@
   "percentMode": true,
   "totalScore": 100,
   "passScore": 60,
-  "notice": "本包为监理工程师精简模拟卷，覆盖监理概论、合同管理、质量控制高频考点。",
+  "notice": "本包为监理工程师章节模拟题库，覆盖监理概论、合同管理、质量控制高频考点。",
   "subjects": [
     {
       "key": "jianli",
       "name": "建设工程监理概论与法规",
       "short": "监理概论与法规",
-      "tag": "精简模拟",
+      "tag": "全章题库",
       "icon": "📋"
     }
   ],

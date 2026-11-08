@@ -9,13 +9,13 @@
   "percentMode": true,
   "totalScore": 100,
   "passScore": 60,
-  "notice": "本包为计算机二级（MS Office 高级应用）精简模拟卷，覆盖计算机基础、Office 操作与公共基础高频考点。",
+  "notice": "本包为计算机二级（MS Office 高级应用）章节模拟题库，覆盖计算机基础、Office 操作与公共基础高频考点。",
   "subjects": [
     {
       "key": "ncre",
       "name": "计算机基础与Office高级应用",
       "short": "计算机基础与Office",
-      "tag": "精简模拟",
+      "tag": "全章题库",
       "icon": "⌨️"
     }
   ],

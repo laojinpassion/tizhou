@@ -9,13 +9,13 @@
   "percentMode": true,
   "totalScore": 100,
   "passScore": 60,
-  "notice": "本包为健康管理师精简模拟卷，覆盖健康监测、评估、干预与慢病管理高频考点。",
+  "notice": "本包为健康管理师章节模拟题库，覆盖健康监测、评估、干预与慢病管理高频考点。",
   "subjects": [
     {
       "key": "jiankang",
       "name": "健康管理基础知识",
       "short": "健康管理基础",
-      "tag": "精简模拟",
+      "tag": "全章题库",
       "icon": "🩺"
     }
   ],

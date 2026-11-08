@@ -81,6 +81,14 @@ if (errors.length) {
 }
 
 const DATA = { exams, banks };
+// 渲染层冒烟门禁：任何页面崩溃都阻断构建与发布
+const { runSmoke } = await import('./smoke.mjs');
+const smoke = runSmoke({ template, DATA });
+if (!smoke.ok) {
+  console.error(`冒烟测试未通过（${smoke.checks} 项 / 失败 ${smoke.failures.length} 项）：`);
+  smoke.failures.slice(0, 30).forEach(f => console.error('  ✗ ' + f));
+  process.exit(1);
+}
 const out = template
   .replace('/*__FIGS__*/', figsJs)
   .replace('/*__DATA__*/', JSON.stringify(DATA));

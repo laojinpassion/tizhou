@@ -6,6 +6,8 @@
   "dateLabel": "全国会计专业技术资格考试（初级）· 每年 5 月",
   "examDate": null,
   "totalScore": 100,
+
+  "percentMode": true,
   "passScore": 60,
   "notice": "初级会计考两科：《初级会计实务》+《经济法基础》，各 100 分、60 分及格，须两科一年内同时通过。本包为实务科模拟卷（题型结构简化为单选+多选），经济法基础数据包筹备中。",
   "subjects": [

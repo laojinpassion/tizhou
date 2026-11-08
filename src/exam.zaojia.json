@@ -9,13 +9,13 @@
   "percentMode": true,
   "totalScore": 100,
   "passScore": 60,
-  "notice": "本包为一级造价工程师精简模拟卷，覆盖造价管理、计价、计量高频考点。",
+  "notice": "本包为一级造价工程师章节模拟题库，覆盖造价管理、计价、计量高频考点。",
   "subjects": [
     {
       "key": "zaojia",
       "name": "建设工程造价管理",
       "short": "造价管理",
-      "tag": "精简模拟",
+      "tag": "全章题库",
       "icon": "📐"
     }
   ],

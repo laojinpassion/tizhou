@@ -4,10 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#2f6fb2">
+<meta name="description" content="题舟 TiZhou：25 场考试免费在线刷题，覆盖驾考、经济师、会计、建造、教师、法考等；含章节练习、错题本与全真模考，免登录，进度保存在本机。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="题舟 TiZhou · 通用刷题引擎">
+<meta property="og:description" content="25 场考试免费在线刷题 · 章节练习 · 错题本 · 全真模考">
+<meta property="og:url" content="https://laojinpassion.github.io/tizhou/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%232f6fb2'/%3E%3Cpath%20d='M32%2010L32%2040L14%2040Z'%20fill='white'/%3E%3Cpath%20d='M36%2018L36%2040L50%2040Z'%20fill='white'%20opacity='.75'/%3E%3Cpath%20d='M8%2048q8-6%2016%200t16%200t16%200'%20stroke='white'%20stroke-width='3'%20fill='none'/%3E%3C/svg%3E">
 <title>题舟 · 通用刷题引擎</title>
 <style>
 :root{--bg:#f4f6f9;--card:#fff;--ink:#1c2330;--mut:#6b7686;--acc:#2f6fb2;--accbg:#eef5fc;--ok:#2e8b57;--okbg:#ecf7f0;--bad:#c94f4f;--badbg:#fbeeee;--line:#e3e8ef;--amber:#b7791f;--amberbg:#fdf6e7}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
 #app{max-width:600px;margin:0 auto;padding:14px 14px 48px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px}
@@ -85,7 +92,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 system-ui,-app
 .sp-slogan{font-size:14px;opacity:.85;margin-top:8px;letter-spacing:2px}
 .sp-tip{font-size:11px;opacity:.5;margin-top:34px}
 /* ================= v3 主题层（主流 APP 视觉） ================= */
-:root{--brand:#2563eb;--brand2:#1d4ed8;--cta:#ff8a00;--bg:#eef2f8;--card:#ffffff;--ink:#111c2e;--mut:#7a8699;--line:#e6ebf3;--acc:#2563eb;--accbg:#eaf1ff;--ok:#16a34a;--okbg:#e8f7ee;--bad:#dc2626;--badbg:#fdeeee;--amber:#d97706;--amberbg:#fdf3e3}
+:root{--brand:#2563eb;--brand2:#1d4ed8;--cta:#ff8a00;--bg:#eef2f8;--card:#ffffff;--ink:#111c2e;--mut:#5b6678;--line:#e6ebf3;--acc:#2563eb;--accbg:#eaf1ff;--ok:#16a34a;--okbg:#e8f7ee;--bad:#dc2626;--badbg:#fdeeee;--amber:#d97706;--amberbg:#fdf3e3}
 body{background:var(--bg)}
 #app{padding-bottom:88px}
 .topbar{padding:10px 14px 6px}
@@ -175,7 +182,7 @@ body{background:var(--bg)}
   <div class="sp-slogan">题海无涯 · 渡你上岸</div>
   <div class="sp-tip">轻触任意处进入</div>
 </div>
-<div id="app"></div>
+<main id="app"></main>
 <script>/*__FIGS__*/</script>
 <script>window.__DATA__ = /*__DATA__*/;</script>
 <script>
@@ -187,14 +194,20 @@ const todayISO=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMo
 const DATA=window.__DATA__||{exams:[],banks:{}};
 const EXAMS=DATA.exams.length?DATA.exams:[{id:'default',name:'题舟',subjects:[],mock:{},passScore:60,totalScore:100,examDate:null,dateLabel:'',icon:'📚',notice:''}];
 let EXIDX=0, EX=EXAMS[0];
+const SUBJ_META={}; EXAMS.forEach(e=>(e.subjects||[]).forEach(s=>{ SUBJ_META[s.key]={name:s.name,short:s.short||s.name}; }));
 const SUBJECTS={};
 function initSubjects(){
   Object.keys(SUBJECTS).forEach(k=>delete SUBJECTS[k]);
   (EX.subjects||[]).forEach(s=>{ SUBJECTS[s.key]={name:s.name,short:s.short||s.name,tag:s.tag||'',icon:s.icon||'📘',qs:[]}; });
+  // 为全部科目建立稳定 id（科目内序号），不随当前考试切换而变化
   Object.keys(DATA.banks||{}).forEach(k=>{
+    let n=0;
     (DATA.banks[k]||[]).forEach(q=>{
-      const s=SUBJECTS[k];
-      if(s&&q.q&&q.o&&q.a){ q.id=k+':'+s.qs.length; s.qs.push(q); }
+      if(q.q&&q.o&&q.a){
+        q.id=k+':'+n++;
+        const s=SUBJECTS[k];
+        if(s) s.qs.push(q);
+      }
     });
   });
   document.title=(EX.name?EX.name+' · ':'')+'题舟刷题';
@@ -242,7 +255,7 @@ const CATALOG=[
 let _toastT=null;
 function toast(msg){
   let t=document.getElementById('toast');
-  if(!t){ t=document.createElement('div'); t.id='toast'; document.body.appendChild(t); }
+  if(!t){ t=document.createElement('div'); t.id='toast'; t.setAttribute('role','status'); t.setAttribute('aria-live','polite'); document.body.appendChild(t); }
   t.textContent=msg; t.classList.add('show');
   clearTimeout(_toastT); _toastT=setTimeout(()=>t.classList.remove('show'),2800);
 }
@@ -250,13 +263,16 @@ function tabbarHTML(active){
   const tabs=[['home','🏠','首页'],['mockSelect','📝','模考'],['wrong','❌','错题本'],['settings','👤','我的']];
   return `<div class="tabbar">${tabs.map(t=>`<button class="${active===t[0]?'on':''}" onclick="nav('${t[0]}')"><span class="ti">${t[1]}</span>${t[2]}</button>`).join('')}</div>`;
 }
-const QMAP=new Map(); Object.values(SUBJECTS).forEach(s=>s.qs.forEach(q=>QMAP.set(q.id,q)));
+const QMAP=new Map(); Object.keys(DATA.banks||{}).forEach(k=>(DATA.banks[k]||[]).forEach(q=>{ if(q.id) QMAP.set(q.id,q); }));
 const findQ=id=>QMAP.get(id);
 
+function normalizeState(o){
+  o=o&&typeof o==='object'?o:{};
+  return {mode:o.mode==='instant'?'instant':'batch',stats:o.stats||{},wrong:o.wrong||{},
+    mocks:Array.isArray(o.mocks)?o.mocks:[],mockLive:o.mockLive||null};
+}
 let S;
-try{ S=JSON.parse(localStorage.getItem('jj_state_v1'))||{}; }catch(e){ S={}; }
-S.mode=S.mode==='instant'?'instant':'batch';
-S.stats=S.stats||{}; S.wrong=S.wrong||{}; S.mocks=S.mocks||[]; S.mockLive=S.mockLive||null;
+try{ S=normalizeState(JSON.parse(localStorage.getItem('jj_state_v1'))); }catch(e){ S=normalizeState({}); }
 function save(){ try{localStorage.setItem('jj_state_v1',JSON.stringify(S));}catch(e){} }
 
 function chapters(skey){
@@ -342,7 +358,7 @@ function renderHome(){
       <path d="M2 42 q7 -6 14 0 t14 0 t14 0 t14 0"/>
     </svg>
     <div class="hero-name" style="font-size:22px;letter-spacing:6px;text-indent:6px;margin-top:4px">题海无涯 · 渡你上岸</div>
-    <div class="hero-stats">${EXAMS.length} 场考试可刷 · ${totalQ} 道题 · 免登录 · 离线可用 · 更多类目筹备中</div>
+    <div class="hero-stats">${EXAMS.length} 场考试可刷 · ${totalQ} 道题 · 免登录 · 保存后可离线 · 更多类目筹备中</div>
   </div>
   <div class="searchbox">
     <input id="skw" placeholder="搜索考试 / 科目 / 章节 / 考点…" oninput="doSearch()" onkeyup="if(event.key==='Enter')doSearch()">
@@ -374,12 +390,12 @@ window.doSearch=function(){
       if((e.name+' '+(s.name||'')+' '+(s.short||'')).toLowerCase().includes(kw)) hits.push('subj');
       const chs={};
       qs.forEach(q=>{ const k=(q.p||'')+'|'+q.c; if(!chs[k])chs[k]={p:q.p,c:q.c,cn:q.cn,n:0}; chs[k].n++; });
-      Object.values(chs).forEach(ch=>{ if(((ch.cn||'')+' '+(ch.p||'')).toLowerCase().includes(kw)) hits.push('chap:'+ch.c); });
+      Object.values(chs).forEach((ch,ci)=>{ if(((ch.cn||'')+' '+(ch.p||'')).toLowerCase().includes(kw)) hits.push('chap:'+ci); });
       const tags=new Set(qs.map(q=>q.k).filter(Boolean));
       tags.forEach(tag=>{ if(tag.toLowerCase().includes(kw)) hits.push('tag:'+tag); });
       hits.forEach(h=>{
         if(h==='subj'){ const id='s:'+i+':'+s.key; if(!seen.has(id)){seen.add(id); rows.push({f:`goRes(${i},'${s.key}',null,null)`,txt:`${e.icon||'📚'} ${esc(e.name)} › ${esc(s.name)}（${qs.length} 题）`,sub:'进入科目'});} }
-        else if(h.startsWith('chap:')){ const c=+h.slice(5); const id='c:'+i+':'+s.key+':'+c; const ch=Object.values(chs).find(x=>x.c===c); if(!seen.has(id)&&ch){seen.add(id); rows.push({f:`goRes(${i},'${s.key}',null,${c})`,txt:`${esc(e.name)} › ${esc(ch.cn)}（${ch.n} 题）`,sub:'直接开刷这一章'});} }
+        else if(h.startsWith('chap:')){ const ci=+h.slice(5); const id='c:'+i+':'+s.key+':'+ci; const ch=Object.values(chs)[ci]; if(!seen.has(id)&&ch){seen.add(id); rows.push({f:`goRes(${i},'${s.key}',null,${ci})`,txt:`${esc(e.name)} › ${esc(ch.cn)}（${ch.n} 题）`,sub:'直接开刷这一章'});} }
         else { const tag=h.slice(4); const id='t:'+i+':'+s.key+':'+tag; if(!seen.has(id)){seen.add(id); rows.push({f:`goRes(${i},'${s.key}','${tag.replace(/'/g,"\\'")}',null)`,txt:`考点「${esc(tag)}」`,sub:`${esc(e.name)} › ${esc(s.short||s.name)} · 考点直刷`});} }
       });
     });
@@ -391,7 +407,7 @@ window.doSearch=function(){
 window.goRes=function(i,skey,tag,c){
   if(EXAMS[EXIDX]!==EXAMS[i]){ EXIDX=i; EX=EXAMS[i]; initSubjects(); SES=null; }
   if(tag){ startSession((DATA.banks[skey]||[]).filter(q=>q.k===tag).map(q=>q.id),{title:'考点：'+tag}); }
-  else if(c){ startChapter(skey,c); }
+  else if(c!==null&&c!==undefined){ startChapter(skey,c); }
   else nav('subject',skey);
 };
 function renderExam(){
@@ -441,19 +457,20 @@ function renderExam(){
   </div>
   <div class="footer-note">
     <b>题舟</b> · 当前数据包：${esc(EX.name)}。题库为按考试大纲生成的<b>模拟题</b>（非官方真题），以当年教材为准。进度保存在本机浏览器。
-  </div>`;
+  </div>
+  ${tabbarHTML('exam')}`;
 }
 
 function renderSubject(skey){
   const sub=SUBJECTS[skey], chs=chapters(skey);
   let lastP=null, html='';
-  chs.forEach(ch=>{
+  chs.forEach((ch,ci)=>{
     if(ch.p!==lastP){ html+=`<div class="gname">${esc(ch.p)}</div>`; lastP=ch.p; }
     const done=ch.qs.filter(q=>S.stats[q.id]&&S.stats[q.id].a).length;
     const n=ch.qs.length;
     const st=ch.qs.reduce((acc,q)=>{const t=S.stats[q.id];if(t&&t.a){acc.a+=t.a;acc.c+=t.c;}return acc;},{a:0,c:0});
     const p=pct(st.a,st.c);
-    html+=`<div class="chap" onclick="startChapter('${skey}',${ch.c})">
+    html+=`<div class="chap" onclick="startChapter('${skey}',${ci})">
       <div class="nm">${ch.p==='案例分析'?'':('第'+ch.c+'章 ')}${esc(ch.cn)}<div class="bar"><i style="width:${n?done/n*100:0}%"></i></div></div>
       <div class="st">${done}/${n} 题${st.a?`<br><span class="${accCls(p)}">${p}%</span>`:''}</div>
     </div>`;
@@ -462,10 +479,11 @@ function renderSubject(skey){
   <div class="topbar"><button class="back" onclick="nav('exam')">‹ 返回</button><div class="title">${esc(sub.name)}</div><div class="sp"></div></div>
   <button class="btn ghost" onclick="startAll('${skey}')">🔀 本科全部乱序刷（${sub.qs.length} 题）</button>
   ${html}
-  <div class="footer-note">点任意章节开始，从第 1 题顺序刷。做错自动进错题本。</div>`;
+  <div class="footer-note">点任意章节开始，从第 1 题顺序刷。做错自动进错题本。</div>
+  ${tabbarHTML('subject')}`;
 }
-window.startChapter=(skey,c)=>{
-  const ch=chapters(skey).find(x=>x.c===c); if(!ch)return;
+window.startChapter=(skey,ci)=>{
+  const ch=chapters(skey)[ci]; if(!ch)return;
   startSession(ch.qs.map(q=>q.id),{title:(ch.p==='案例分析'?'':'第'+ch.c+'章 ')+ch.cn});
 };
 window.startAll=skey=>{ startSession(shuffle(SUBJECTS[skey].qs.map(q=>q.id)),{title:SUBJECTS[skey].name+' · 乱序',source:skey}); };
@@ -486,7 +504,7 @@ function renderQuiz(){
       else if(sel.includes(i)) cls+=' wrongpick';
       else cls+=' dim';
     }
-    return `<button class="${cls}" ${revealed?'':'onclick="pick('+i+')"'}><span class="abc">${letters[i]}</span><span>${esc(o)}</span></button>`;
+    return `<button class="${cls}" aria-pressed="${sel.includes(i)}" ${revealed?'aria-disabled="true"':'onclick="pick('+i+')"'}><span class="abc">${letters[i]}</span><span>${esc(o)}</span></button>`;
   }).join('');
   const multiBtn=(!revealed&&isMulti&&S.mode==='instant')?`<button class="btn" onclick="revealNow()">确认答案</button>`:'';
   let nextBtn='';
@@ -598,11 +616,11 @@ function renderWrong(){
   if(!ids.length){
     html=`<div class="card mut" style="text-align:center;padding:28px">错题本是空的，先去刷几题吧 🙂</div>`;
   }else{
-    const bySub={jc:[],gs:[]};
-    ids.forEach(id=>{ const q=findQ(id); if(q)bySub[q.s].push(q); });
+    const bySub={};
+    ids.forEach(id=>{ const q=findQ(id); if(q)(bySub[q.s]=bySub[q.s]||[]).push(q); });
     Object.keys(bySub).forEach(skey=>{
       if(!bySub[skey].length)return;
-      html+=`<div class="gname">${esc(SUBJECTS[skey].name)}</div>`;
+      html+=`<div class="gname">${esc((SUBJ_META[skey]||{}).name||skey)}</div>`;
       bySub[skey].forEach(q=>{
         html+=`<div class="wrongrow"><div class="tx"><b>${esc(q.q.slice(0,60))}${q.q.length>60?'…':''}</b><br><span class="small">${esc(q.cn)} · 做错于 ${S.wrong[q.id]}</span></div><button class="del" onclick="delWrong('${q.id}')">移除</button></div>`;
       });
@@ -622,7 +640,7 @@ function renderSettings(){
   const wrongN=Object.keys(S.wrong).length;
   const mockN=S.mocks.length;
   const mockHist=S.mocks.length?`<div class="card"><div class="h2">🏅 模考成绩（最近 ${S.mocks.length} 次）</div>${S.mocks.map(m=>{
-    const sub=(EX.subjects.find(s=>s.key===m.subject)||{}).short||m.subject;
+    const sub=(SUBJ_META[m.subject]||{}).short||m.subject;
     return `<div class="wrongrow"><div class="tx"><b>${esc(sub)}　${m.score} 分</b><br><span class="small">${m.pass?'✓ 达到合格线':'未达合格线'} · ${m.date}</span></div></div>`;
   }).join('')}</div>`:'';
   $('#app').innerHTML=`
@@ -665,21 +683,22 @@ function renderSettings(){
   ${tabbarHTML('settings')}`;
 }
 window.setMode=m=>{ S.mode=m; save(); renderSettings(); };
-window.wipe=()=>{ if(confirm('确定清空所有做题记录、错题本和统计吗？')){ S={mode:S.mode,stats:{},wrong:{}}; save(); nav('home'); } };
+window.wipe=()=>{ if(confirm('确定清空所有做题记录、错题本和统计吗？')){ S=normalizeState({mode:S.mode}); save(); nav('home'); } };
 
 /* ============ 全真模考（规则来自考试数据包） ============ */
 let MK=null, MKTimer=null;
 function renderMockSelect(){
   const m=S.mocks&&S.mocks[0];
+  const firstMock=EX.subjects.map(x=>(EX.mock||{})[x.key]).find(Boolean)||{};
   const mockCards=EX.subjects.map(s=>{
     const r=(EX.mock||{})[s.key];
     if(!r)return'';
-    const parts=[]; if(r.single)parts.push(r.single+' 单选'); if(r.multi)parts.push(r.multi+' 多选'); if(r.case)parts.push(r.case+' 个案例分析');
+    const parts=[]; if(r.single)parts.push(r.single+' 单选'); if(r.multi)parts.push(r.multi+' 多选'); if(r.case)parts.push(r.case+' 组案例分析');
     return `<div class="mockcard" onclick="startMock('${s.key}')"><div class="ic">${s.icon||'📘'}</div><div class="tx"><b>${esc(s.name)}</b><div class="mut small">${parts.join(' + ')} · 共 ${r.total||'?'} 题 · ${r.dur||105} 分钟</div></div></div>`;
   }).join('');
   $('#app').innerHTML=`
   <div class="topbar"><div class="title" style="text-align:left;font-weight:800">📝 全真模考</div><div class="sp"></div></div>
-  <div class="card"><div class="h2">规则说明</div><div class="mut">按真实考试结构随机组卷并计时，到时自动交卷。评分规则：单选 ${(EX.mock[s]||{}).singlePts||1} 分/题；多选与案例分析 2 分/题——<b>错选不得分，少选且所选均正确时每个正确选项得 0.5 分</b>。满分 ${EX.totalScore} 分，${EX.passScore} 分及格。模考中答案不即时揭晓，交卷后统一出分。</div></div>
+  <div class="card"><div class="h2">规则说明</div><div class="mut">按真实考试结构随机组卷并计时，到时自动交卷。评分规则：单选 ${firstMock.singlePts||1} 分/题；多选与案例分析 2 分/题——<b>错选不得分，少选且所选均正确时每个正确选项得 0.5 分</b>。满分 ${EX.totalScore} 分，${EX.passScore} 分及格。模考中答案不即时揭晓，交卷后统一出分。</div></div>
   ${m?`<div class="card"><div class="mut">最近一次模考：${esc((EX.subjects.find(s=>s.key===m.subject)||{}).short||m.subject)} <b>${m.score} 分</b> · ${m.pass?'✓ 达到合格线':'未达 '+EX.passScore+' 分合格线'} · ${m.date}</div></div>`:''}
   ${mockCards}
   <div class="footer-note">建议在电脑上做模考以模拟机考手感。中途关闭页面进度会保留，可从考试页"继续模考"恢复；切出页面计时不会暂停，请专注作答。</div>
@@ -689,8 +708,12 @@ window.startMockSelect=function(){ nav('mockSelect'); };
 window.startMock=function(s){
   const r=(EX.mock||{})[s];
   if(!r){ alert('该科目未配置模考规则'); return; }
-  const singles=shuffle(SUBJECTS[s].qs.filter(q=>q.t==='single'&&!q.bg)).slice(0,r.single||0);
-  const multis=shuffle(SUBJECTS[s].qs.filter(q=>q.t==='multi'&&!q.bg)).slice(0,r.multi||0);
+  const singlePool=shuffle(SUBJECTS[s].qs.filter(q=>q.t==='single'&&!q.bg));
+  const multiPool=shuffle(SUBJECTS[s].qs.filter(q=>q.t==='multi'&&!q.bg));
+  const multis=multiPool.slice(0,Math.min(r.multi||0,multiPool.length));
+  // 多选题池不足时把缺口补给单选，保证总题量仍等于 total
+  const short=(r.multi||0)-multis.length;
+  const singles=singlePool.slice(0,Math.min((r.single||0)+short,singlePool.length));
   let cases=[];
   if(r.case){
     const cq=SUBJECTS[s].qs.filter(q=>q.bg);
@@ -700,14 +723,18 @@ window.startMock=function(s){
   const qs=[...singles,...multis,...cases];
   if(qs.length<r.total){ alert('题库不足，无法组卷（还缺 '+(r.total-qs.length)+' 题，请先扩充题库）'); return; }
   MK={s,qs,idx:0,selBy:{},startedAt:Date.now(),durMs:r.dur*60*1000,done:false};
-  S.mockLive={ids:qs.map(q=>q.id),idx:0,selBy:{},startedAt:MK.startedAt,durMs:MK.durMs}; save();
+  S.mockLive={examId:EX.id,ids:qs.map(q=>q.id),idx:0,selBy:{},startedAt:MK.startedAt,durMs:MK.durMs}; save();
   clearInterval(MKTimer); MKTimer=setInterval(tickMock,1000);
   nav('mockRun');
 };
 window.resumeMock=function(){
   const L=S.mockLive; if(!L)return;
+  if(L.examId&&L.examId!==EX.id){
+    const i=EXAMS.findIndex(e=>e.id===L.examId);
+    if(i>=0){ EXIDX=i; EX=EXAMS[i]; initSubjects(); SES=null; }
+  }
   const qs=L.ids.map(findQ).filter(Boolean);
-  if(!qs.length){ delete S.mockLive; save(); nav('home'); return; }
+  if(!qs.length){ toast('该模考对应的考试包暂不可用，进度已保留'); nav('home'); return; }
   MK={s:qs[0].s,qs,idx:L.idx||0,selBy:L.selBy||{},startedAt:L.startedAt,durMs:L.durMs||105*60*1000,done:false};
   if(Date.now()-MK.startedAt>=MK.durMs){ finishMock(true); return; }
   clearInterval(MKTimer); MKTimer=setInterval(tickMock,1000);
@@ -723,10 +750,10 @@ function renderMockRun(){
   const sel=MK.selBy[MK.idx]||[];
   const left=MK.durMs-(Date.now()-MK.startedAt);
   const isMulti=q.t==='multi';
-  const opts=q.o.map((o,i)=>`<button class="opt${sel.includes(i)?' sel':''}" onclick="mockPick(${i})"><span class="abc">${letters[i]}</span><span>${esc(o)}</span></button>`).join('');
+  const opts=q.o.map((o,i)=>`<button class="opt${sel.includes(i)?' sel':''}" aria-pressed="${sel.includes(i)}" onclick="mockPick(${i})"><span class="abc">${letters[i]}</span><span>${esc(o)}</span></button>`).join('');
   const marked=MK.qs.map((qq,i)=>`<b class="${MK.selBy[i]&&MK.selBy[i].length?'ans':''}${i===MK.idx?' cur':''}" onclick="mockJump(${i})">${i+1}</b>`).join('');
   $('#app').innerHTML=`
-  <div class="topbar"><button class="back" onclick="quitMock()">‹ 退出</button><div class="title">模考 · ${SUBJECTS[MK.s].short}</div><div class="timer" style="color:${left<10*60*1000?'var(--bad)':'var(--acc)'}">${fmtLeft(left)}</div></div>
+  <div class="topbar"><button class="back" onclick="quitMock()">‹ 退出</button><div class="title">模考 · ${(SUBJECTS[MK.s]||{}).short||MK.s}</div><div class="timer" style="color:${left<10*60*1000?'var(--bad)':'var(--acc)'}">${fmtLeft(left)}</div></div>
   <div class="progress"><i style="width:${(MK.idx+1)/MK.qs.length*100}%"></i></div>
   <div class="mut small" style="margin-bottom:4px">第 ${MK.idx+1}/${MK.qs.length} 题 · ${esc(q.cn||'')} <span class="badge ${isMulti?'b-multi':'b-single'}">${q.bg?'案例分析 · 不定项':(isMulti?'多选':'单选')}</span></div>
   <div class="card">
@@ -776,7 +803,7 @@ function finishMock(auto){
     det[kind][0]+=sc; det[kind][1]+=(q.bg||q.t==='multi')?2:singlePts;
     if(!sel.length||!eqSet(sel,q.a)) wrongIds.push(q.id);
   });
-  let rawFull=0; det.k=det.k; Object.keys(det).forEach(k=>{rawFull+=det[k][1];});
+  let rawFull=0; Object.keys(det).forEach(k=>{rawFull+=det[k][1];});
   let finalScore=score;
   if(EX.percentMode&&rawFull>0){ finalScore=Math.round(score/rawFull*100); det.single[1]=Math.round(det.single[1]/rawFull*100); det.multi[1]=Math.round(det.multi[1]/rawFull*100); det.case[1]=Math.round(det.case[1]/rawFull*100); }
   const rec={date:todayISO(),subject:MK.s,score:finalScore,pass:finalScore>=EX.passScore,total:MK.qs.length,
@@ -816,7 +843,26 @@ window.showMockWrong=function(){
 
 /* 启动 */
 renderHome();
-setTimeout(()=>{ const sp=document.getElementById('splash'); if(sp) sp.classList.add('hide'); }, 3000);
+setTimeout(()=>{ const sp=document.getElementById('splash'); if(sp) sp.classList.add('hide'); }, 300);
+/* 可访问性：为所有 onclick 卡片补语义与键盘可达 */
+function enhanceA11y(){
+  if(!document.querySelectorAll)return;
+  document.querySelectorAll('#app [onclick]').forEach(el=>{
+    if(el.tagName==='BUTTON')return;
+    if(!el.hasAttribute('role')) el.setAttribute('role','button');
+    if(!el.hasAttribute('tabindex')) el.setAttribute('tabindex','0');
+  });
+}
+if(typeof document.addEventListener==='function'){
+  document.addEventListener('keydown',e=>{
+    if((e.key==='Enter'||e.key===' ')&&e.target&&e.target.matches&&e.target.matches('[role="button"]')){ e.preventDefault(); e.target.click(); }
+  });
+}
+if(typeof MutationObserver==='function'){
+  const appEl=document.getElementById('app');
+  if(appEl) new MutationObserver(enhanceA11y).observe(appEl,{childList:true,subtree:true});
+}
+enhanceA11y();
 </script>
 </body>
 </html>

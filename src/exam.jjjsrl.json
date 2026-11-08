@@ -15,18 +15,11 @@
       "key": "rl",
       "name": "人力资源管理专业知识和实务",
       "short": "人力资源实务",
-      "tag": "精简模拟",
+      "tag": "全章题库",
       "icon": "🎓"
     }
   ],
   "mock": {
-    "jjjsrl": {
-      "single": 25,
-      "multi": 5,
-      "case": 0,
-      "total": 30,
-      "dur": 40
-    },
     "rl": {
       "single": 60,
       "multi": 20,
