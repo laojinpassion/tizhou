@@ -21,11 +21,11 @@
   ],
   "mock": {
     "zhuanan": {
-      "single": 20,
-      "multi": 4,
+      "single": 60,
+      "multi": 20,
       "case": 0,
-      "total": 24,
-      "dur": 35
+      "total": 80,
+      "dur": 90
     }
   }
 }
