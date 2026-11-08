@@ -19,11 +19,11 @@
   ],
   "mock": {
     "jz1": {
-      "single": 25,
-      "multi": 5,
+      "single": 70,
+      "multi": 25,
       "case": 0,
-      "total": 30,
-      "dur": 40
+      "total": 95,
+      "dur": 95
     }
   },
   "sort": 22

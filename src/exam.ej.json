@@ -21,11 +21,11 @@
   ],
   "mock": {
     "ej": {
-      "single": 27,
-      "multi": 4,
+      "single": 60,
+      "multi": 20,
       "case": 0,
-      "total": 31,
-      "dur": 35
+      "total": 80,
+      "dur": 90
     }
   }
 }

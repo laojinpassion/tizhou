@@ -21,11 +21,11 @@
   ],
   "mock": {
     "fakao": {
-      "single": 22,
-      "multi": 5,
+      "single": 60,
+      "multi": 20,
       "case": 0,
-      "total": 27,
-      "dur": 35
+      "total": 80,
+      "dur": 90
     }
   }
 }

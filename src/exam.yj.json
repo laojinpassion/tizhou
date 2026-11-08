@@ -21,11 +21,11 @@
   ],
   "mock": {
     "yj": {
-      "single": 30,
-      "multi": 6,
+      "single": 60,
+      "multi": 20,
       "case": 0,
-      "total": 36,
-      "dur": 35
+      "total": 80,
+      "dur": 90
     }
   }
 }

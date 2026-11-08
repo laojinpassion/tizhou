@@ -19,11 +19,11 @@
   ],
   "mock": {
     "kj": {
-      "single": 60,
-      "multi": 20,
+      "single": 70,
+      "multi": 25,
       "case": 0,
-      "total": 80,
-      "dur": 90
+      "total": 95,
+      "dur": 100
     }
   },
   "sort": 30

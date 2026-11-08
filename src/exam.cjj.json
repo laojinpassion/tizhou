@@ -21,11 +21,11 @@
   ],
   "mock": {
     "cjj": {
-      "single": 27,
-      "multi": 6,
+      "single": 60,
+      "multi": 20,
       "case": 0,
-      "total": 33,
-      "dur": 35
+      "total": 80,
+      "dur": 90
     }
   }
 }
