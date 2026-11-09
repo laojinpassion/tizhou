@@ -110,7 +110,7 @@ const { genPages } = await import('./gen-pages.mjs');
 const pages = genPages({ exams, banks, root });
 console.log(`  静态入口页：${pages.count} 个（总览 + ${pages.count - 1} 场考试）· sitemap ${pages.urls} 条 URL`);
 // PWA：Service Worker 缓存版本由题库内容决定，题库一变缓存自动失效
-const swVer = createHash('sha1').update(JSON.stringify(DATA)).update(readFileSync(join(root, 'install.html'))).digest('hex').slice(0, 8);
+const swVer = createHash('sha1').update(JSON.stringify(DATA)).update(template).update(readFileSync(join(root, 'install.html'))).digest('hex').slice(0, 8);
 const sw = [
   `const CACHE='tizhou-${swVer}';`,
   `const CORE=['./','./index.html','./manifest.webmanifest','./install.html','./icons/icon-192.png','./icons/icon-512.png'];`,

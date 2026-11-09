@@ -326,7 +326,8 @@ function record(q,sel,atIdx){
 }
 
 /* ============ 渲染 ============ */
-function nav(screen,arg){ ({home:renderHome,exam:renderExam,subject:renderSubject,quiz:renderQuiz,wrong:renderWrong,settings:renderSettings,mockSelect:renderMockSelect,mockRun:renderMockRun})[screen](arg); }
+let CUR_SCR='home';
+function nav(screen,arg){ CUR_SCR=screen; ({home:renderHome,exam:renderExam,subject:renderSubject,quiz:renderQuiz,wrong:renderWrong,settings:renderSettings,mockSelect:renderMockSelect,mockRun:renderMockRun})[screen](arg); }
 
 function renderHome(){
   const totalQ=EXAMS.reduce((n,e)=>n+e.subjects.reduce((m,s)=>m+((DATA.banks[s.key]||[]).length),0),0);
@@ -884,6 +885,14 @@ if(typeof MutationObserver==='function'){
   if(appEl) new MutationObserver(enhanceA11y).observe(appEl,{childList:true,subtree:true});
 }
 enhanceA11y();
+// 安卓物理返回键：由原生壳调用，返回 true 表示页面已处理、不要退出应用
+window.__tizhouBack=function(){
+  if(CUR_SCR==='home') return false;
+  if(CUR_SCR==='quiz'||CUR_SCR==='mockRun'){
+    if(typeof confirm==='function'&&!confirm('正在进行练习/模考，确定要退出吗？进度会自动保存。')) return true;
+  }
+  nav('home'); return true;
+};
 // PWA：注册离线缓存（仅浏览器环境；本地单文件打开时自动跳过）
 if(typeof navigator!=='undefined'&&navigator.serviceWorker&&typeof window!=='undefined'&&typeof window.addEventListener==='function'){
   window.addEventListener('load',function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
