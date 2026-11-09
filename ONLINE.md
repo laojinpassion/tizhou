@@ -8,8 +8,8 @@
 | 仓库 | https://github.com/laojinpassion/tizhou （公开，MIT） |
 | 本地代码 | `D:\JARVIS\jingjishi` |
 | Pages 分支 | `main` / 根目录 |
-| 当前版本 tag | `v1.1.0`（引擎修复）、`v1.2.0`（上线物料与静态页）、`v1.2.1`（PWA）、`v1.3.0`（安卓 APK）、`v1.4.0`（体验重构） |
-| 安卓安装包 | `https://laojinpassion.github.io/tizhou/download/tizhou-1.4.0.apk`（4.5 MB，versionCode 2，签名版） |
+| 当前版本 tag | `v1.1.0`（引擎修复）、`v1.2.0`（上线物料与静态页）、`v1.2.1`（PWA）、`v1.3.0`（安卓 APK）、`v1.4.0`（体验重构）、`v1.5.0`（备份/续做/纠错） |
+| 安卓安装包 | `https://laojinpassion.github.io/tizhou/download/tizhou-1.5.0.apk`（4.6 MB，versionCode 3，签名版） |
 | 题库规模 | 25 场考试 / 26 个科目 / 2653 题 |
 
 ## 日常发布（唯一通道）

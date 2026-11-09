@@ -202,6 +202,19 @@ body{background:var(--bg)}
 .mockcard{display:flex;align-items:center;gap:12px;background:#fff;border-radius:16px;padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 3px rgba(16,32,64,.06);cursor:pointer}
 .mockcard .ic{font-size:24px;flex:none}
 .mockcard .tx{flex:1;min-width:0;font-size:15px}
+/* ================= v5 备份 / 续做 / 纠错 ================= */
+.modal{position:fixed;inset:0;z-index:100;background:rgba(12,22,38,.45);display:flex;align-items:flex-end;justify-content:center;padding:0}
+.sheet{background:#fff;width:100%;max-width:600px;border-radius:20px 20px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -10px 30px rgba(0,0,0,.2);max-height:88vh;overflow:auto}
+.sheet-h{font-size:17px;font-weight:800;margin-bottom:6px}
+.rpt-ta{width:100%;box-sizing:border-box;min-height:220px;border:1.5px solid var(--line);border-radius:12px;padding:12px;font:13px/1.7 ui-monospace,Menlo,Consolas,monospace;color:var(--ink);background:#fbfcfe;outline:none;resize:vertical}
+.rpt-ta:focus{border-color:var(--acc)}
+.resume-card{display:flex;align-items:center;gap:12px;cursor:pointer}
+.resume-card .rc-i{width:42px;height:42px;border-radius:12px;background:var(--accbg);color:var(--acc);display:flex;align-items:center;justify-content:center;font-size:20px;flex:none}
+.resume-card .rc-t{flex:1;min-width:0}
+.resume-card .rc-n{font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.resume-card .rc-s{font-size:12.5px;color:var(--mut);margin-top:2px}
+.report-link{display:block;width:100%;margin-top:12px;padding:8px 0 0;border:0;border-top:1px dashed var(--line);background:none;color:var(--mut);font-size:12.5px;text-align:center;cursor:pointer}
+.report-link:hover{color:var(--acc)}
 </style>
 </head>
 <body>
@@ -301,8 +314,11 @@ const findQ=id=>QMAP.get(id);
 
 function normalizeState(o){
   o=o&&typeof o==='object'?o:{};
+  // last：上次未完成的练习位置，可「继续」；reports：本机记录的题目纠错
+  const last=(o.last&&Array.isArray(o.last.ids)&&o.last.ids.length&&o.last.examId)?o.last:null;
   return {mode:o.mode==='instant'?'instant':'batch',stats:o.stats||{},wrong:o.wrong||{},
-    mocks:Array.isArray(o.mocks)?o.mocks:[],mockLive:o.mockLive||null};
+    mocks:Array.isArray(o.mocks)?o.mocks:[],mockLive:o.mockLive||null,
+    last, reports:Array.isArray(o.reports)?o.reports.slice(0,100):[]};
 }
 let S;
 try{ S=normalizeState(JSON.parse(localStorage.getItem('jj_state_v1'))); }catch(e){ S=normalizeState({}); }
@@ -362,6 +378,42 @@ function startSession(qids,opts={}){
   if(!qs.length){ alert('暂无可刷的题目'); return; }
   SES={qs,idx:0,sel:null,revealed:false,batchStart:0,wrongAdded:0,selBy:{},revBy:{},title:opts.title||'',redo:!!opts.redo,source:opts.source||''};
   nav('quiz');
+  saveLast();
+}
+/* ===== 上次练习位置：「继续上次」用 ===== */
+function saveLast(){
+  if(!SES||!SES.qs||!SES.qs.length||!EX) return;
+  try{
+    S.last={examId:EX.id,ids:SES.qs.map(q=>q.id),idx:SES.idx,total:SES.qs.length,
+      selBy:SES.selBy||{},revBy:SES.revBy||{},title:SES.title||'',
+      redo:!!SES.redo,source:SES.source||'',at:Date.now()};
+    save();
+  }catch(e){}
+}
+function clearLast(){ if(S.last){ S.last=null; save(); } }
+window.resumeLast=function(){
+  const L=S.last; if(!L) return;
+  const ei=EXAMS.findIndex(e=>e.id===L.examId);
+  if(ei>=0&&EXAMS[EXIDX]!==EXAMS[ei]){ EXIDX=ei; EX=EXAMS[ei]; initSubjects(); SES=null; }
+  const qs=L.ids.map(findQ).filter(Boolean);
+  if(!qs.length){ clearLast(); toast('上次的练习已失效'); nav('home'); return; }
+  const idx=Math.min(L.idx||0,qs.length-1);
+  SES={qs,idx,sel:(L.selBy&&L.selBy[idx])?L.selBy[idx].slice():null,revealed:false,
+    batchStart:0,wrongAdded:0,selBy:L.selBy||{},revBy:L.revBy||{},
+    title:L.title||'继续练习',redo:!!L.redo,source:L.source||''};
+  SES.revealed=!!(SES.revBy[idx]);
+  nav('quiz');
+  toast(qs.length<L.ids.length?'题库已更新，已跳过失效题目':'已回到上次练习的位置');
+};
+window.dropLast=function(){ clearLast(); renderHome(); toast('已清除继续记录'); };
+function relTime(ts){
+  const d=Date.now()-ts;
+  if(!ts||d<0) return '';
+  if(d<60e3) return '刚刚';
+  if(d<3600e3) return Math.floor(d/60e3)+' 分钟前';
+  if(d<86400e3) return Math.floor(d/3600e3)+' 小时前';
+  if(d<7*86400e3) return Math.floor(d/86400e3)+' 天前';
+  return new Date(ts).toLocaleDateString('zh-CN');
 }
 function figHTML(q){
   const f=window.__FIGS__&&q.fig&&window.__FIGS__[q.fig];
@@ -439,6 +491,14 @@ function renderHome(){
     <input id="skw" placeholder="搜索考试 / 科目 / 章节 / 考点…" oninput="doSearch()" onkeyup="if(event.key==='Enter')doSearch()">
   </div>
   <div id="sres"></div>
+  ${S.last?`<div class="card resume-card" onclick="resumeLast()">
+    <div class="rc-i">▶</div>
+    <div class="rc-t">
+      <div class="rc-n">继续：${esc(S.last.title||'上次练习')}</div>
+      <div class="rc-s">第 ${S.last.idx+1}/${S.last.total} 题 · ${relTime(S.last.at)}</div>
+    </div>
+    <span style="color:#b6c3d9;font-size:18px">›</span>
+  </div>`:''}
   ${catHTML}
   <div class="footer-note">
     ${typeof location!=='undefined'&&/^https?:/.test(location.protocol)?`<a href="exams.html" style="color:var(--acc)">📚 考试目录（${totalQ} 题）</a> · <a href="install.html" style="color:var(--acc)">📲 安装到手机 / 离线版</a> · `:''}目录持续扩充：新数据包上线后自动出现在对应类目。想催更某个考试，到
@@ -511,6 +571,14 @@ function renderExam(){
     <div class="eb-meta">${cd?(cd.past?`${esc(EX.dateLabel||'本期')} · <b>已开考</b>`:`距开考 <b style="font-size:17px">${cd.days===0?'今天':cd.days+' 天'}</b>`):esc(EX.dateLabel||'')}</div>
   </div>
   ${subjCards}
+  ${S.last&&S.last.examId===EX.id?`<div class="card resume-card" onclick="resumeLast()">
+    <div class="rc-i">▶</div>
+    <div class="rc-t">
+      <div class="rc-n">继续：${esc(S.last.title||'上次练习')}</div>
+      <div class="rc-s">第 ${S.last.idx+1}/${S.last.total} 题 · ${relTime(S.last.at)}</div>
+    </div>
+    <span style="color:#b6c3d9;font-size:18px">›</span>
+  </div>`:''}
   <div class="card subject-card" onclick="nav('wrong')">
     <div class="h2">🔴 错题本 <span class="badge b-multi">${wrongN}</span></div>
     <div class="mut">做错的题自动收进来，重做全对才会移出</div>
@@ -601,6 +669,7 @@ function renderQuiz(){
     ${opts}
     ${revealed?verdictHTML(q,sel):''}
     ${multiBtn}
+    <button class="report-link" onclick="openReport()">题目或答案有误？点这里反馈</button>
   </div>
   <div class="quizact"><div class="in">${prevAct}${mainAct||'<button class="btn" disabled>请选择答案</button>'}</div></div>`;
 }
@@ -610,6 +679,7 @@ window.prevQ=()=>{
   SES.sel=(SES.selBy&&SES.selBy[i])?SES.selBy[i].slice():null;
   SES.revealed=!!(SES.revBy&&SES.revBy[i]);
   renderQuiz();
+  saveLast();
   if(typeof window.scrollTo==='function') window.scrollTo(0,0);
 };
 function nextBatchEdge(){ const nextIdx=SES.idx+1; return nextIdx===SES.qs.length||(SES.mode==='batch'&&nextIdx%5===0); }
@@ -625,7 +695,7 @@ window.pick=i=>{
   if(q.t==='multi'){ SES.sel=SES.sel||[]; const k=SES.sel.indexOf(i); if(k>=0)SES.sel.splice(k,1); else SES.sel.push(i); SES.sel.sort(); }
   else SES.sel=[i];
   SES.selBy=SES.selBy||{}; SES.selBy[SES.idx]=SES.sel.slice();
-  if(S.mode==='instant'&&q.t==='single') revealNow(); else renderQuiz();
+  if(S.mode==='instant'&&q.t==='single') revealNow(); else { renderQuiz(); saveLast(); }
 };
 window.revealNow=()=>{
   const q=SES.qs[SES.idx];
@@ -634,13 +704,14 @@ window.revealNow=()=>{
   SES.revBy=SES.revBy||{}; SES.revBy[SES.idx]=true;
   record(q,SES.sel);
   renderQuiz();
+  saveLast();
 };
 window.nextQ=()=>{
   const nextIdx=SES.idx+1;
   if(S.mode==='batch'&&(nextIdx===SES.qs.length||nextIdx%5===0)){ renderBatch(nextIdx); return; }
   if(nextIdx>=SES.qs.length){ renderSummary(); return; }
   SES.idx=nextIdx; SES.sel=null; SES.revealed=false;
-  renderQuiz();
+  renderQuiz(); saveLast();
 };
 
 function renderBatch(endIdx){
@@ -677,11 +748,12 @@ function renderBatch(endIdx){
 window.continueBatch=endIdx=>{
   if(endIdx>=SES.qs.length){ renderSummary(); return; }
   SES.idx=endIdx; SES.batchStart=endIdx; SES.sel=null; SES.revealed=false;
-  renderQuiz();
+  renderQuiz(); saveLast();
 };
 window.quitQuiz=()=>{ SES=null; nav('exam'); };
 
 function renderSummary(){
+  clearLast();
   const total=SES.qs.length;
   let a=0,c=0;
   SES.qs.forEach(q=>{ const st=S.stats[q.id]; if(st){a+=st.a;c+=st.c;} });
@@ -767,12 +839,19 @@ function renderSettings(){
   <div class="card">
     <div class="h2">🗂 数据</div>
     <div class="mut" style="margin-bottom:8px">当前数据包：${esc(EX.name)}（${EX.subjects.reduce((n,s)=>n+(DATA.banks[s.key]||[]).length,0)} 题）。进度保存在本机，清除应用数据、卸载或换设备会丢失。</div>
-    <button class="btn sub" style="color:var(--bad)" onclick="wipe()">⚠ 清空全部做题数据</button>
+    <div class="row" style="margin-top:4px">
+      <button class="btn sub" style="margin-top:0" onclick="doExport()">导出备份</button>
+      <button class="btn sub" style="margin-top:0" onclick="pickImport()">恢复备份</button>
+    </div>
+    <input type="file" id="impFile" accept=".json,application/json" style="display:none" onchange="doImport(this)">
+    <div class="small" style="margin-top:8px;line-height:1.8">备份包含做题记录、错题本、模考成绩与「继续上次」。<br>换手机：旧机点「导出备份」→ 把文件发给自己（微信/网盘）→ 新机点「恢复备份」选它。</div>
+    ${(S.reports||[]).length?`<button class="btn sub" style="margin-top:10px" onclick="openReports()">题库纠错记录（${S.reports.length} 条）</button>`:''}
+    <button class="btn sub" style="color:var(--bad);margin-top:10px" onclick="wipe()">⚠ 清空全部做题数据</button>
   </div>
   <div class="card">
     <div class="h2">ℹ 关于题舟</div>
     <div class="small" style="line-height:1.8">
-      题舟 TiZhou · 通用刷题引擎 <b>v1.4.0</b>（开源 MIT）<br>
+      题舟 TiZhou · 通用刷题引擎 <b>v1.5.0</b>（开源 MIT）<br>
       题库为按考试大纲生成的<b>模拟题</b>，非官方真题，以当年官方教材与考纲为准。<br>
       做题进度只存在本机，清除应用数据、卸载或更换设备会丢失；建议定期截图留存重要成绩。<br>
       发现答案有误或想加新考试：<a href="https://github.com/laojinpassion/tizhou/issues/new/choose" target="_blank" rel="noopener" style="color:var(--acc)">提交 Issue（题目纠错模板）</a> · <a href="https://github.com/laojinpassion/tizhou" target="_blank" rel="noopener" style="color:var(--acc)">GitHub 项目页</a>
@@ -786,6 +865,170 @@ function renderSettings(){
 window.setMode=m=>{ S.mode=m; save(); renderSettings(); };
 window.toggleMode=()=>{ S.mode=(S.mode==='batch'?'instant':'batch'); save(); nav('exam'); toast(S.mode==='batch'?'已切换：批量揭晓（5 题一组）':'已切换：做一题看一题'); };
 window.wipe=()=>{ if(confirm('确定清空所有做题记录、错题本和统计吗？')){ S=normalizeState({mode:S.mode}); save(); nav('home'); } };
+
+/* ============ 备份 / 恢复 ============ */
+function backupName(){
+  const d=new Date(), p=n=>String(n).padStart(2,'0');
+  return `tizhou-backup-${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}.json`;
+}
+function backupText(){
+  return JSON.stringify({app:'tizhou',schema:1,exportedAt:new Date().toISOString(),state:S});
+}
+function capPlugin(n){
+  return (typeof window!=='undefined'&&window.Capacitor&&window.Capacitor.Plugins)?window.Capacitor.Plugins[n]:null;
+}
+window.doExport=async function(){
+  const text=backupText(), name=backupName();
+  const FS=capPlugin('Filesystem'), SH=capPlugin('Share');
+  if(FS&&SH){
+    try{
+      const data=btoa(unescape(encodeURIComponent(text)));
+      const w=await FS.writeFile({path:name,data,directory:'CACHE'});
+      await SH.share({title:'题舟 进度备份',url:w.uri,dialogTitle:'发送或保存备份文件'});
+      toast('备份已生成，选「保存到文件」或发给自己即可');
+      return;
+    }catch(e){ /* 插件不可用时退回浏览器下载 */ }
+  }
+  try{
+    const blob=new Blob([text],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url; a.download=name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),4000);
+    toast('备份文件已下载');
+  }catch(e){
+    toast('导出失败：'+(e&&e.message?e.message:'未知错误'));
+  }
+};
+window.pickImport=function(){
+  const el=document.getElementById('impFile');
+  if(el) el.click(); else toast('当前环境不支持选择文件');
+};
+window.doImport=function(inp){
+  const f=inp&&inp.files&&inp.files[0];
+  if(!f) return;
+  const r=new FileReader();
+  r.onload=function(){
+    try{
+      const o=JSON.parse(String(r.result));
+      const st=(o&&o.state)?o.state:o;
+      if(!st||typeof st!=='object'||!st.stats||typeof st.stats!=='object') throw new Error('不是题舟的备份文件');
+      if(!confirm('恢复备份会覆盖当前进度（做题记录、错题本、模考成绩、继续记录）。确定继续？')) return;
+      S=normalizeState(st); save();
+      toast('已恢复，正在刷新');
+      setTimeout(()=>{ location.reload(); },600);
+    }catch(e){
+      alert('恢复失败：'+(e&&e.message?e.message:'文件格式不正确'));
+    }
+  };
+  r.readAsText(f);
+  inp.value='';
+};
+
+/* ============ 题目纠错 ============ */
+function reportText(q){
+  const L=['A','B','C','D','E'];
+  const sub=(typeof SUBJ_META!=='undefined'&&SUBJ_META[q.s])?SUBJ_META[q.s]:null;
+  const head=[
+    '【题舟题目纠错】',
+    '题目ID：'+q.id,
+    '考试：'+(EX?EX.name:''),
+    '科目：'+(sub?(sub.name||sub.short||q.s):q.s),
+    '章节：'+(q.p||'')+' '+(q.c||'')+' '+(q.cn||''),
+    '题型：'+(q.bg?'案例分析':(q.t==='multi'?'多选':'单选')),
+    '',
+    '题干：'+q.q,
+  ];
+  const opts=q.o.map((o,i)=>L[i]+'. '+o);
+  const tail=['','标注答案：'+q.a.map(i=>L[i]).join('、'),'解析：'+(q.e||''),'','问题描述：（请补充：题干错字 / 答案错误 / 解析错误 / 选项重复）'];
+  return head.concat(opts,tail).join('\n');
+}
+window.openReport=function(){
+  const q=SES&&SES.qs&&SES.qs[SES.idx]; if(!q) return;
+  const text=reportText(q);
+  // 本机留档，避免「复制了但没发出去」丢失
+  S.reports=(S.reports||[]).filter(r=>r.id!==q.id);
+  S.reports.unshift({id:q.id,at:Date.now(),q:q.q.slice(0,80),text});
+  S.reports=S.reports.slice(0,100); save();
+  const box=document.createElement('div');
+  box.id='rptModal';
+  box.className='modal';
+  box.innerHTML=`<div class="sheet">
+    <div class="sheet-h">题目纠错</div>
+    <div class="small" style="margin-bottom:10px">内容已自动填好。补一句「哪里不对」，然后复制发给作者，或直接去 GitHub 提交。</div>
+    <textarea id="rptText" class="rpt-ta"></textarea>
+    <div class="row" style="margin-top:10px">
+      <button class="btn sub" style="margin-top:0" onclick="closeReport()">稍后</button>
+      <button class="btn" style="margin-top:0" onclick="copyReport()">复制</button>
+    </div>
+    <button class="btn ghost" onclick="reportToGithub()">去 GitHub 提交</button>
+    <div class="small" style="text-align:center">已存到本机「我的 → 题库纠错记录」，之后也能再取</div>
+  </div>`;
+  box.onclick=function(e){ if(e.target===box) closeReport(); };
+  document.body.appendChild(box);
+  const ta=document.getElementById('rptText');
+  if(ta){ ta.value=text; ta.scrollTop=0; }
+};
+window.closeReport=function(){
+  const el=document.getElementById('rptModal');
+  if(el&&el.parentNode) el.parentNode.removeChild(el);
+};
+function reportBody(){
+  const ta=document.getElementById('rptText');
+  return ta?ta.value:'';
+}
+window.copyReport=function(){
+  const txt=reportBody();
+  const done=()=>toast('已复制，粘贴到微信发给作者即可');
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(done).catch(()=>fallbackCopy(txt,done));
+  } else fallbackCopy(txt,done);
+};
+function fallbackCopy(txt,cb){
+  try{
+    const ta=document.createElement('textarea');
+    ta.value=txt; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); ta.remove(); cb();
+  }catch(e){ toast('复制失败，请长按文本框手动复制'); }
+}
+window.reportToGithub=function(){
+  const txt=reportBody();
+  const title='题目纠错：'+txt.split('\n')[1].replace('题目ID：','');
+  const url='https://github.com/laojinpassion/tizhou/issues/new?title='+encodeURIComponent(title)+'&body='+encodeURIComponent(txt);
+  const w=window.open(url,'_blank');
+  if(!w){ toast('已记下，请点「复制」后自行打开 GitHub 提交'); return; }
+  closeReport();
+};
+window.openReports=function(){
+  const list=S.reports||[];
+  if(!list.length){ toast('还没有记录'); return; }
+  const all=list.map(r=>r.text).join('\n\n----------\n\n');
+  const box=document.createElement('div');
+  box.id='rptList';
+  box.className='modal';
+  box.innerHTML=`<div class="sheet">
+    <div class="sheet-h">题库纠错记录（${list.length} 条）</div>
+    <div class="small" style="margin-bottom:10px">这些是你在本机记录过的题目问题，可整体复制后发给作者。</div>
+    <textarea id="rptAll" class="rpt-ta" readonly></textarea>
+    <div class="row" style="margin-top:10px">
+      <button class="btn sub" style="margin-top:0" onclick="closeReports()">关闭</button>
+      <button class="btn" style="margin-top:0" onclick="copyReports()">复制全部</button>
+    </div>
+  </div>`;
+  box.onclick=function(e){ if(e.target===box) closeReports(); };
+  document.body.appendChild(box);
+  const ta=document.getElementById('rptAll'); if(ta) ta.value=all;
+};
+window.closeReports=function(){ const el=document.getElementById('rptList'); if(el&&el.parentNode) el.parentNode.removeChild(el); };
+window.copyReports=function(){
+  const ta=document.getElementById('rptAll');
+  const txt=ta?ta.value:'';
+  const done=()=>toast('已复制全部纠错记录');
+  if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done).catch(()=>fallbackCopy(txt,done));
+  else fallbackCopy(txt,done);
+};
 
 /* ============ 全真模考（规则来自考试数据包） ============ */
 let MK=null, MKTimer=null;

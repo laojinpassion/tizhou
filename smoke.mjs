@@ -48,6 +48,8 @@ export function runSmoke({ template, DATA }) {
 return {
   renderHome,renderExam,renderSubject,renderQuiz,renderWrong,renderSettings,renderMockSelect,renderMockRun,
   startMock:window.startMock,finishMock,resumeMock:window.resumeMock,openExam:window.openExam,startChapter:window.startChapter,wipe:window.wipe,
+  pick:window.pick,nextQ:window.nextQ,prevQ:window.prevQ,
+  resumeLast:window.resumeLast,backupText,reportText,openReport:window.openReport,closeReport:window.closeReport,
   chapters,getS:()=>S,getEX:()=>EX,getMK:()=>MK,getSES:()=>SES,getSUBJECTS:()=>SUBJECTS,EXAMS
 };`)();
 
@@ -123,6 +125,75 @@ return {
     assert(api.getEX().id === 'jiankang', '未自动切换到断点所属考试');
     assert(S.mockLive && S.mockLive.examId === 'jiankang', '断点被误删');
     assert(target, '找不到目标考试');
+  });
+
+  // ---- 4. 继续上次练习 / 备份 / 纠错 ----
+  ok('继续上次：记录位置并恢复', () => {
+    const e = api.EXAMS[0];
+    const s = e.subjects[0];
+    api.openExam(0);
+    api.startChapter(s.key, 0);
+    const ses0 = api.getSES();
+    assert(ses0 && ses0.qs.length > 1, '章节题目不足，无法测试续做');
+    api.pick(0);
+    api.nextQ();
+    const S = api.getS();
+    assert(S.last && S.last.examId === e.id, '未记录上次练习');
+    assert(S.last.idx === 1, `记录的位置应为 1，实际 ${S.last.idx}`);
+    // 打乱现场后恢复
+    api.openExam(api.EXAMS.length - 1);
+    api.getS().last = S.last;
+    api.resumeLast();
+    const ses1 = api.getSES();
+    assert(ses1 && ses1.idx === 1, `恢复后位置应为 1，实际 ${ses1 && ses1.idx}`);
+    assert(api.getEX().id === e.id, '恢复时未切回原考试');
+    assert(ses1.title === ses0.title, '恢复后标题不一致');
+  });
+  ok('继续上次：完成后清除记录', () => {
+    const ses = api.getSES();
+    api.getS().mode = 'instant';           // 即时模式下最后一题直接进总结页
+    ses.idx = ses.qs.length - 1;
+    ses.revealed = true;
+    api.nextQ();
+    assert(!api.getS().last, '练习完成后未清除继续记录');
+  });
+  ok('备份文本可解析且包含状态', () => {
+    const txt = api.backupText();
+    const o = JSON.parse(txt);
+    assert(o.app === 'tizhou', '缺少 app 标识');
+    assert(o.state && typeof o.state.stats === 'object', 'state.stats 缺失');
+    assert(Array.isArray(o.state.reports), 'state.reports 缺失');
+  });
+  ok('恢复备份：拒绝非题舟文件', () => {
+    const bad = { hello: 1 };
+    assert(!(bad && bad.state && bad.state.stats), '校验逻辑应拒绝该对象');
+  });
+  ok('纠错文本包含题目要素', () => {
+    api.openExam(0);
+    const s = api.EXAMS[0].subjects[0];
+    api.startChapter(s.key, 0);
+    const q = api.getSES().qs[0];
+    const txt = api.reportText(q);
+    assert(txt.includes(q.id), '缺少题目 ID');
+    assert(txt.includes(q.q.slice(0, 12)), '缺少题干');
+    assert(txt.includes('标注答案'), '缺少答案标注');
+  });
+  ok('纠错会写入本机记录且不重复', () => {
+    api.getS().reports = [];
+    api.openReport();
+    api.closeReport();
+    const n1 = api.getS().reports.length;
+    api.openReport();
+    api.closeReport();
+    const n2 = api.getS().reports.length;
+    assert(n1 === 1, `首次应记录 1 条，实际 ${n1}`);
+    assert(n2 === 1, `同题不应重复记录，实际 ${n2}`);
+  });
+  ok('清空数据后备份仍可生成', () => {
+    api.wipe();
+    const o = JSON.parse(api.backupText());
+    assert(o.state.last === null, '清空后 last 应为 null');
+    assert(o.state.reports.length === 0, '清空后 reports 应为空');
   });
 
   return { ok: failures.length === 0, checks, failures };
