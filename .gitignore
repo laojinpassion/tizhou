@@ -1,1 +1,13 @@
 .mimosa/
+# 原生壳工程的生成物与依赖，不纳入发布
+app/node_modules/
+app/www/
+app/android/.gradle/
+app/android/build/
+app/android/app/build/
+app/android/local.properties
+app/ios/Pods/
+app/ios/App/App/public/
+app/android/app/src/main/assets/public/
+# 云端构建流水线：当前 token 缺 workflow scope，暂不随 API 发布；本地保留
+.github/workflows/

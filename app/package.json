@@ -1,0 +1,24 @@
+{
+  "name": "tizhou-app",
+  "version": "1.2.1",
+  "private": true,
+  "description": "题舟 TiZhou 原生壳工程（Web 资产由 build-app.mjs 从主仓库产物组装）",
+  "scripts": {
+    "assets": "node ../build-app.mjs",
+    "sync": "node ../build-app.mjs && cap sync",
+    "add:android": "cap add android",
+    "add:ios": "cap add ios",
+    "open:android": "cap open android",
+    "open:ios": "cap open ios",
+    "apk:debug": "cd android && gradlew assembleDebug",
+    "apk:release": "cd android && gradlew assembleRelease"
+  },
+  "dependencies": {
+    "@capacitor/core": "^8.6.0"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/cli": "^8.6.0",
+    "@capacitor/ios": "^8.6.0"
+  }
+}

@@ -185,7 +185,7 @@ ${list.map(e => {
   }
 
   // ---- sitemap / robots ----
-  const urls = ['', 'install.html', 'exams.html', ...exams.map(e => `exams/${e.id}.html`)];
+  const urls = ['', 'install.html', 'exams.html', 'privacy.html', 'terms.html', 'support.html', ...exams.map(e => `exams/${e.id}.html`)];
   writeFileSync(join(root, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map(u => `  <url><loc>${BASE}${u}</loc><changefreq>weekly</changefreq><priority>${u === '' ? '1.0' : u === 'exams.html' ? '0.9' : '0.7'}</priority></url>`).join('\n')}
