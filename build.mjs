@@ -105,3 +105,6 @@ console.log(`✓ 构建成功：${outFile}（同步输出 index.html 供 GitHub 
 console.log(`  题库总量：${total} 题（${Object.keys(counts).map(k => `${k}:${counts[k]}`).join(' ')}）`);
 console.log(`  配图题目：${figCount} 题（图库 ${figKeys.size} 张）`);
 console.log(`  考试数据包：${exams.map(e => e.name).join('、') || '无'}`);
+const { genPages } = await import('./gen-pages.mjs');
+const pages = genPages({ exams, banks, root });
+console.log(`  静态入口页：${pages.count} 个（总览 + ${pages.count - 1} 场考试）· sitemap ${pages.urls} 条 URL`);

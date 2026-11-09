@@ -694,7 +694,7 @@ function renderHome(){
   <div id="sres"></div>
   ${catHTML}
   <div class="footer-note">
-    目录持续扩充：新数据包上线后自动出现在对应类目。想催更某个考试，到
+    ${typeof location!=='undefined'&&/^https?:/.test(location.protocol)?`<a href="exams.html" style="color:var(--acc)">📚 考试目录与题库说明（${totalQ} 题）</a> · `:''}目录持续扩充：新数据包上线后自动出现在对应类目。想催更某个考试，到
     <a href="https://github.com/laojinpassion/tizhou" target="_blank" style="color:var(--acc)">GitHub 项目页</a> 提 issue，或按 README 自己做数据包（引擎零改动）。
   </div>
   ${tabbarHTML('home')}`;
@@ -1003,9 +1003,10 @@ function renderSettings(){
   <div class="card">
     <div class="h2">ℹ 关于题舟</div>
     <div class="small" style="line-height:1.8">
-      题舟 TiZhou · 通用刷题引擎 v1（开源 MIT）<br>
+      题舟 TiZhou · 通用刷题引擎 v1.2（开源 MIT）<br>
       题库为按考试大纲生成的<b>模拟题</b>，非官方真题，以当年官方教材与考纲为准。<br>
-      想加新考试数据包 / 提需求：<a href="https://github.com/laojinpassion/tizhou" target="_blank" style="color:var(--acc)">GitHub · laojinpassion/tizhou</a>
+      做题进度只存在本机浏览器，清除浏览器数据或更换设备会丢失；建议定期截图留存重要成绩。<br>
+      发现答案有误或想加新考试：<a href="https://github.com/laojinpassion/tizhou/issues/new/choose" target="_blank" style="color:var(--acc)">提交 Issue（题目纠错模板）</a> · <a href="https://github.com/laojinpassion/tizhou" target="_blank" style="color:var(--acc)">GitHub 项目页</a>
     </div>
   </div>
   ${tabbarHTML('settings')}`;
