@@ -879,15 +879,21 @@ function capPlugin(n){
 }
 window.doExport=async function(){
   const text=backupText(), name=backupName();
+  const CAP=window.Capacitor;
+  const isNative=!!(CAP&&typeof CAP.isNativePlatform==='function'&&CAP.isNativePlatform());
   const FS=capPlugin('Filesystem'), SH=capPlugin('Share');
-  if(FS&&SH){
+  if(isNative){
+    if(!FS||!SH){ toast('当前版本缺少导出组件，请到「我的」升级到最新版'); return; }
     try{
       const data=btoa(unescape(encodeURIComponent(text)));
       const w=await FS.writeFile({path:name,data,directory:'CACHE'});
       await SH.share({title:'题舟 进度备份',url:w.uri,dialogTitle:'发送或保存备份文件'});
-      toast('备份已生成，选「保存到文件」或发给自己即可');
-      return;
-    }catch(e){ /* 插件不可用时退回浏览器下载 */ }
+    }catch(e){
+      // 用户在分享面板点「取消」也会走到这里，不能谎报成功
+      const m=String(e&&e.message||e||'');
+      if(!/cancel/i.test(m)) toast('导出未完成：'+m.slice(0,40));
+    }
+    return;
   }
   try{
     const blob=new Blob([text],{type:'application/json'});
@@ -896,9 +902,9 @@ window.doExport=async function(){
     a.href=url; a.download=name;
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(()=>URL.revokeObjectURL(url),4000);
-    toast('备份文件已下载');
+    toast('备份文件已下载：'+name);
   }catch(e){
-    toast('导出失败：'+(e&&e.message?e.message:'未知错误'));
+    toast('当前环境不支持下载，请用手机版「导出备份」');
   }
 };
 window.pickImport=function(){
