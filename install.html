@@ -3,16 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>把题舟装到手机 · 免注册免应用商店</title>
-<meta name="description" content="题舟 TiZhou 安装指引：添加到手机主屏幕像 App 一样打开，或下载单文件 HTML 完全离线刷题。免注册、免登录、无广告。">
+<title>把题舟装到手机 · 安卓 APK 直接安装</title>
+<meta name="description" content="题舟 TiZhou 安装指引：安卓手机直接下载 APK 安装，不需要应用商店、不需要注册；iPhone 可用添加到主屏幕。免注册、免登录、无广告、完全离线。">
 <link rel="canonical" href="https://laojinpassion.github.io/tizhou/install.html">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="theme-color" content="#2f6fb2">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"题舟需要注册或登录吗？","acceptedAnswer":{"@type":"Answer","text":"不需要。免注册、免登录、无广告，做题进度只保存在本机浏览器。"}},{"@type":"Question","name":"装到手机需要应用商店吗？","acceptedAnswer":{"@type":"Answer","text":"不需要。用手机浏览器打开网址，通过「添加到主屏幕」即可像 App 一样使用；也可以下载单文件 HTML 完全离线刷题。"}},{"@type":"Question","name":"断网后还能刷题吗？","acceptedAnswer":{"@type":"Answer","text":"在线版首次访问后由离线缓存支持；下载的离线版 HTML 保存手机后用浏览器打开，完全不需要网络。"}}]}</script>
+<meta property="og:type" content="website">
+<meta property="og:title" content="把题舟装到手机 · 安卓 APK 直接安装">
+<meta property="og:description" content="免注册、免应用商店。安卓直接装 APK，iPhone 添加到主屏幕，25 场考试 / 2653 道题完全离线可用。">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"安装题舟需要应用商店或注册账号吗？","acceptedAnswer":{"@type":"Answer","text":"都不需要。安卓手机直接下载 APK 安装包即可安装，iPhone 用 Safari 添加到主屏幕。无需注册、无需登录、无广告。"}},{"@type":"Question","name":"为什么安装时会提示「未知来源」或「不安全」？","acceptedAnswer":{"@type":"Answer","text":"因为题舟没有上架应用商店，安装包不经过商店审核，安卓系统会对所有商店外的安装包给出统一提示。在系统设置里允许「安装未知应用」后继续安装即可。"}},{"@type":"Question","name":"断网后还能刷题吗？","acceptedAnswer":{"@type":"Answer","text":"可以。APK 与离线版 HTML 都把全部题库打包在本地，安装后完全断网也能正常刷题、模考、看错题。"}}]}</script>
 <style>
-:root{--bg:#f4f6f9;--card:#fff;--ink:#1c2330;--mut:#5b6678;--acc:#2563eb;--line:#e3e8ef;--ok:#2e8b57;--okbg:#ecf7f0}
+:root{--bg:#f4f6f9;--card:#fff;--ink:#1c2330;--mut:#5b6678;--acc:#2563eb;--line:#e3e8ef;--ok:#2e8b57;--okbg:#ecf7f0;--warn:#a15c00;--warnbg:#fff6e5}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
 .wrap{max-width:760px;margin:0 auto;padding:26px 18px 64px}a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
 header{background:linear-gradient(135deg,#2f6fb2,#173d61);color:#fff;border-radius:18px;padding:28px 24px;margin-bottom:18px}
@@ -24,55 +27,74 @@ h2{font-size:19px;margin:0 0 10px}h3{font-size:15px;margin:16px 0 6px}
 .btn.ghost{background:#fff;color:var(--acc);border:1.5px solid var(--acc)}
 .btn[hidden]{display:none}ol,ul{padding-left:20px}li{margin:6px 0}.mut{color:var(--mut);font-size:13.5px}
 .note{background:#eef5fc;border-left:3px solid var(--acc);padding:10px 14px;border-radius:0 10px 10px 0;margin-top:12px;font-size:14px}
+.warn{background:var(--warnbg);border-left:3px solid #e0a300;padding:10px 14px;border-radius:0 10px 10px 0;margin-top:12px;font-size:14px;color:#5c3d00}
+.meta{display:flex;gap:18px;flex-wrap:wrap;font-size:13.5px;color:var(--mut);margin-top:10px}
+.meta b{color:var(--ink);font-weight:600}
 footer{margin-top:26px;color:var(--mut);font-size:13px;line-height:1.9}
 @media(max-width:600px){.wrap{padding:16px 12px 48px}header h1{font-size:21px}}
 </style>
 </head>
 <body>
 <div class="wrap">
-<header><h1>把题舟装到手机</h1><p>免注册 · 免应用商店 · 免登录 · 无广告 · 25 场考试 / 2653 道题</p></header>
+<header><h1>把题舟装到手机</h1><p>安卓直接装 APK · 无需应用商店 · 免注册 · 免登录 · 无广告 · 完全离线</p></header>
 
 <div class="card">
-  <h2>方式一 · 添加到主屏幕 <span class="tag">推荐</span></h2>
-  <p>像普通 App 一样有图标、全屏打开，首次访问后支持离线。不需要任何账号，也不需要应用商店。</p>
-  <button class="btn" id="installBtn" hidden>一键安装到手机</button>
-  <a class="btn ghost" href="index.html">先打开题舟</a>
-  <h3>Android（Chrome / Edge / 夸克等）</h3>
-  <ol><li>用浏览器打开 <a href="index.html">题舟网页版</a>；</li><li>点右上角菜单 → 「添加到主屏幕」或「安装应用」；</li><li>桌面出现「题舟」图标，点开即全屏使用。</li></ol>
+  <h2>方式一 · 安卓手机直接安装 <span class="tag">推荐</span></h2>
+  <p>这是一个真正的安卓 App 安装包（APK）。装好后桌面有「题舟」图标，全屏打开、完全离线，<b>不需要应用商店，也不需要注册任何账号</b>。</p>
+  <a class="btn" href="https://laojinpassion.github.io/tizhou/download/tizhou-1.2.1.apk" download>下载安卓版 APK</a>
+  <a class="btn ghost" href="index.html">不安装，先用网页版</a>
+  <div class="meta"><span>版本 <b>1.2.1</b></span><span>大小 <b>4.5 MB</b></span><span>系统 <b>Android 7.0 及以上</b></span><span>权限 <b>仅联网（不使用）</b></span></div>
+  <h3>安装步骤</h3>
+  <ol>
+    <li>用手机<b>系统浏览器</b>（或 Chrome / Edge / 夸克）打开本页；</li>
+    <li>点上面的「下载安卓版 APK」，等下载完成；</li>
+    <li>点通知栏或文件管理器里的安装包，弹出提示时选择<b>「允许安装未知应用」</b>（只需一次）；</li>
+    <li>点「安装」→「打开」，桌面出现「题舟」图标，完成。</li>
+  </ol>
+  <div class="warn"><b>注意</b>：微信、QQ、钉钉的内置浏览器不能直接安装 APK（会提示「不支持打开」）。请点右上角「…」选择「在浏览器打开」，或把链接复制到系统浏览器。</div>
+  <div class="note">安装时安卓会提示「此应用来自未知来源」「应用未经检测」——这是所有<b>不上架商店</b>的应用都会收到的统一提示，不是文件损坏。题舟不含广告、不收集信息、不做任何联网请求，可放心安装。</div>
+</div>
+
+<div class="card">
+  <h2>方式二 · 添加到主屏幕（不装 APK）</h2>
+  <p>不想装安装包时，可以把网页版添加到桌面，效果接近 App：有图标、全屏打开、首次访问后离线可用。</p>
+  <button class="btn ghost" id="installBtn" hidden>一键安装到主屏幕</button>
+  <h3>Android（Chrome / Edge / 夸克）</h3>
+  <ol><li>用浏览器打开 <a href="index.html">题舟网页版</a>；</li><li>点右上角菜单 →「添加到主屏幕」或「安装应用」；</li><li>桌面出现「题舟」图标，点开即全屏使用。</li></ol>
   <h3>iPhone / iPad（Safari）</h3>
-  <ol><li>用 <b>Safari</b> 打开题舟网页版（微信内置浏览器不支持添加）；</li><li>点底部「分享」按钮 → 选择「添加到主屏幕」；</li><li>确认名称后，桌面出现图标。</li></ol>
-  <div class="note">如果上面的「一键安装」按钮出现，直接点它即可；若未出现，按上述菜单操作，效果相同。</div>
+  <ol><li>用 <b>Safari</b> 打开题舟网页版（微信内置浏览器不支持）；</li><li>点底部「分享」按钮 →「添加到主屏幕」；</li><li>确认名称后，桌面出现图标。</li></ol>
+  <div class="note">若上面的按钮出现，直接点它即可；未出现时按菜单操作，效果相同。</div>
 </div>
 
 <div class="card">
-  <h2>方式二 · 下载单文件离线版 <span class="tag">完全离线</span></h2>
+  <h2>方式三 · 单文件离线版 <span class="tag">发给别人最方便</span></h2>
   <p>整个应用就是一个 HTML 文件（约 2.1 MB），含全部 2653 道题。下载后存到手机，用浏览器打开即可刷题，<b>不需要网络、不需要安装、不需要任何账号</b>。</p>
-  <a class="btn" href="%E7%BB%8F%E6%B5%8E%E5%B8%88%E5%88%B7%E9%A2%98.html" download="题舟-离线版.html">下载离线版 HTML</a>
+  <a class="btn ghost" href="%E7%BB%8F%E6%B5%8E%E5%B8%88%E5%88%B7%E9%A2%98.html" download="题舟-离线版.html">下载离线版 HTML</a>
   <a class="btn ghost" href="exams.html">先看考试目录</a>
-  <p class="mut" style="margin-top:12px">适合：发给别人、存网盘、无网环境、不想装任何东西。注意：离线版是独立文件，之后题库更新需要重新下载；不同文件的做题进度互不相通。</p>
+  <p class="mut" style="margin-top:12px">适合：发微信、存网盘、无网环境、不想装任何东西。注意：离线版是独立文件，题库更新需重新下载；不同文件的做题进度互不相通。</p>
 </div>
 
 <div class="card">
-  <h2>方式三 · 直接发文件 / 发链接 <span class="tag">最省事</span></h2>
+  <h2>方式四 · 直接把链接发出去</h2>
   <ul>
     <li><b>发链接</b>：把 <code>https://laojinpassion.github.io/tizhou/</code> 发给对方，手机浏览器打开即用，零安装。</li>
-    <li><b>发文件</b>：把下载的离线版 HTML 通过微信/网盘发给对方，对方用手机浏览器打开即可，零安装。</li>
-    <li><b>搜网址</b>：搜索引擎收录需要时间；直接发链接或扫二维码比「搜名字」更快、更可靠。</li>
+    <li><b>发链接（安装页）</b>：把本页地址发过去，对方可自行选 APK 或网页版。</li>
+    <li><b>搜网址</b>：搜索引擎收录需要时间，直接发链接比「搜名字」更快更可靠。</li>
   </ul>
-  <div class="note">三者的共同点：都不需要注册开发者账号、不需要软著、不需要应用商店审核。需要那些手续的只有「上架应用商店」这一条路。</div>
 </div>
 
 <div class="card">
   <h2>使用前须知</h2>
   <ul>
     <li>题目为依据公开考试大纲与通用教材生成的<b>模拟题</b>，非官方真题，以当年官方教材为准。</li>
-    <li>做题进度只保存在当前浏览器 / 当前文件，清缓存、换设备或换文件会丢失。</li>
-    <li>不收集、不上传任何个人信息；无账号、无广告、无付费。</li>
-    <li>发现答案有误，可到 <a href="https://github.com/laojinpassion/tizhou/issues/new/choose" target="_blank">GitHub 提交纠错</a>。</li>
+    <li>做题进度只保存在本机，卸载应用、清缓存、换设备会丢失。</li>
+    <li>不收集、不上传任何个人信息；无账号、无广告、无付费、无内购。</li>
+    <li>发现答案有误，可到 <a href="https://github.com/laojinpassion/tizhou/issues/new/choose" target="_blank" rel="noopener">GitHub 提交纠错</a>。</li>
+    <li>题舟未上架任何应用商店，安装包仅由本页提供；可下载后核对校验值 <a href="download/tizhou-1.2.1.apk.sha256">SHA-256</a>。</li>
   </ul>
 </div>
 
-<footer>题舟 TiZhou · 开源 MIT · <a href="index.html">打开应用</a> · <a href="exams.html">考试目录</a> · <a href="https://github.com/laojinpassion/tizhou" target="_blank">GitHub</a><br>本项目与任何官方机构、出版社无关。</footer>
+<footer>题舟 TiZhou · 开源 MIT · <a href="index.html">打开应用</a> · <a href="exams.html">考试目录</a> · <a href="privacy.html">隐私说明</a> · <a href="https://github.com/laojinpassion/tizhou" target="_blank" rel="noopener">GitHub</a><br>本项目与任何官方机构、出版社无关。</footer>
 </div>
 <script>
 (function(){

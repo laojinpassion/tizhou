@@ -1176,10 +1176,22 @@ window.showMockWrong=function(){
 };
 
 /* 启动 */
-// 支持 PWA 桌面快捷方式：index.html?screen=mockSelect|wrong|settings
+// 深链接：PWA 桌面快捷方式、商店截图演示、静态页跳转
+// ?screen=mockSelect|wrong|settings | ?screen=subject&s=<key> | ?screen=quiz&s=<key>
 let startScreen='home';
-try{ const p=new URLSearchParams(window.location.search).get('screen'); if(['mockSelect','wrong','settings'].includes(p)) startScreen=p; }catch(e){}
-if(startScreen==='home') renderHome(); else nav(startScreen);
+try{
+  const u=new URLSearchParams(window.location.search), sc=u.get('screen'), s=u.get('s');
+  if(['mockSelect','wrong','settings'].includes(sc)) startScreen=sc;
+  else if((sc==='subject'||sc==='quiz')&&s){
+    if(!SUBJECTS[s]){
+      const ei=EXAMS.findIndex(e=>(e.subjects||[]).some(x=>x.key===s));
+      if(ei>=0){ EXIDX=ei; EX=EXAMS[ei]; initSubjects(); SES=null; }
+    }
+    if(SUBJECTS[s]&&sc==='subject'){ nav('subject',s); startScreen='done'; }
+    else if(SUBJECTS[s]&&sc==='quiz'&&chapters(s).length){ startChapter(s,0); startScreen='done'; }
+  }
+}catch(e){}
+if(startScreen==='home') renderHome(); else if(startScreen!=='done') nav(startScreen);
 setTimeout(()=>{ const sp=document.getElementById('splash'); if(sp) sp.classList.add('hide'); }, 300);
 /* 可访问性：为所有 onclick 卡片补语义与键盘可达 */
 function enhanceA11y(){

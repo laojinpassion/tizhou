@@ -110,7 +110,7 @@ const { genPages } = await import('./gen-pages.mjs');
 const pages = genPages({ exams, banks, root });
 console.log(`  静态入口页：${pages.count} 个（总览 + ${pages.count - 1} 场考试）· sitemap ${pages.urls} 条 URL`);
 // PWA：Service Worker 缓存版本由题库内容决定，题库一变缓存自动失效
-const swVer = createHash('sha1').update(JSON.stringify(DATA)).digest('hex').slice(0, 8);
+const swVer = createHash('sha1').update(JSON.stringify(DATA)).update(readFileSync(join(root, 'install.html'))).digest('hex').slice(0, 8);
 const sw = [
   `const CACHE='tizhou-${swVer}';`,
   `const CORE=['./','./index.html','./manifest.webmanifest','./install.html','./icons/icon-192.png','./icons/icon-512.png'];`,
@@ -118,6 +118,8 @@ const sw = [
   `self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});`,
   `self.addEventListener('fetch',e=>{`,
   `  const r=e.request; if(r.method!=='GET')return;`,
+  `  // 安装包等大文件不进缓存，直接交给浏览器下载`,
+  `  if(/\\.(apk|zip|exe|dmg|ipa)$/i.test(new URL(r.url).pathname))return;`,
   `  if(r.mode==='navigate'){`,
   `    e.respondWith(fetch(r).then(res=>{const cp=res.clone();caches.open(CACHE).then(c=>c.put(r,cp));return res;})`,
   `      .catch(()=>caches.match(r).then(h=>h||caches.match('./index.html'))));`,

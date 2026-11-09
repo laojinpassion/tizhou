@@ -1,5 +1,14 @@
 # 更新日志
 
+## v1.3.0（2026-11-09）· 安卓 APK 可安装
+
+- 新增 Capacitor 原生壳工程 `app/`，打包安卓安装包：`download/tizhou-1.2.1.apk`（4.5 MB，release 签名，minSdk 24 / targetSdk 36）。
+- 新增 `build-app.mjs`：从主仓库产物自动组装 `app/www`，避免手抄文件导致 App 内题库过期。
+- 新增发布签名流程：`app/android/keystore/`、`keystore.properties`（均已忽略入库）、`app/build.gradle` 条件启用 release 签名。
+- `install.html` 改版：安卓 APK 直接下载安装为「方式一」推荐路径，附安装步骤、未知来源提示、微信内置浏览器限制说明；网页版 / 离线 HTML / 发链接保留为备选。
+- Service Worker 跳过 `.apk` 等大文件，避免安装包被写入离线缓存。
+- 桌面名统一为「题舟」，版本号与网页版对齐为 1.2.1。
+
 ## v1.2.1（2026-11-09）· PWA 可安装与零注册分发
 
 - 新增 `manifest.webmanifest`、`sw.js` 离线缓存与 4 个代码生成图标（192 / 512 / maskable / apple-touch），手机可「添加到主屏幕」全屏使用。

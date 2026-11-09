@@ -8,7 +8,8 @@
 | 仓库 | https://github.com/laojinpassion/tizhou （公开，MIT） |
 | 本地代码 | `D:\JARVIS\jingjishi` |
 | Pages 分支 | `main` / 根目录 |
-| 当前版本 tag | `v1.1.0`（引擎修复）、`v1.2.0`（上线物料与静态页） |
+| 当前版本 tag | `v1.1.0`（引擎修复）、`v1.2.0`（上线物料与静态页）、`v1.2.1`（PWA）、`v1.3.0`（安卓 APK） |
+| 安卓安装包 | `https://laojinpassion.github.io/tizhou/download/tizhou-1.2.1.apk`（4.5 MB，签名版） |
 | 题库规模 | 25 场考试 / 26 个科目 / 2653 题 |
 
 ## 日常发布（唯一通道）
@@ -55,6 +56,19 @@ gh api -X PATCH repos/laojinpassion/tizhou/git/refs/heads/main -f sha=<目标提
 - 本机工具链放在工作区 `toolchain/`（**JDK 21**、Android SDK、Gradle 发行版），`app/android/local.properties` 指向该 SDK。
   注意：`@capacitor/android` 的 `build.gradle` 写死 `sourceCompatibility JavaVersion.VERSION_21`，用 JDK 17 编译会在 `:capacitor-android:compileDebugJavaWithJavac` 报「无效的源发行版:21」，必须用 JDK 21。
 - 编译调试包：`cd app/android && ./gradlew assembleDebug --no-daemon`。首次构建需让 Gradle 走代理：`GRADLE_OPTS="-Dhttps.proxyHost=127.0.0.1 -Dhttps.proxyPort=<端口> ..."`。
+- 发布签名：密钥库 `app/android/keystore/tizhou-release.keystore`，别名 `tizhou`，有效期至 2056-11-01；口令写在 `app/android/keystore.properties`（与 keystore、`*.jks` 一起已加入 `.gitignore`，**不会随发布上线**）。`app/build.gradle` 在该文件存在时自动启用 release 签名，不存在时 `assembleRelease` 产出未签名包。
+- 完整出包顺序（缺一步 APK 里就是旧题库）：
+  ```bash
+  cd /d/JARVIS/jingjishi
+  node build.mjs            # 题库校验 + 冒烟 + 生成 index.html / 静态页 / sw.js
+  node build-app.mjs        # 组装 app/www
+  cd app && npx cap copy android && cd android
+  ./gradlew assembleRelease --no-daemon
+  # 产物 app/android/app/build/outputs/apk/release/app-release.apk
+  cp app/build/outputs/apk/release/app-release.apk ../../download/tizhou-<版本>.apk
+  ```
+- 安装包对外地址：`https://laojinpassion.github.io/tizhou/download/tizhou-<版本>.apk`，由 `install.html` 的「下载安卓版 APK」按钮引用。发布新版本时**同时改三处**：`app/android/app/build.gradle` 的 `versionName`、`download/` 下的 APK 文件名、`install.html` 里的下载链接与「版本/大小」文案。
+- APK 里 `assets/public/` 是 `www` 的副本，**改完网页必须 `cap copy` 再打包**，否则 App 内还是老内容。
 - `.github/workflows/build-android.yml` 为云端构建流水线（本地保留，未上传）：当前 `gh` token 的 scopes 为 `repo, gist, read:org`，缺 `workflow`，通过 Git Data API / Contents API 写入 `.github/workflows/` 会返回 404。需要先执行 `gh auth refresh -h github.com -s workflow` 重新授权，之后才能随发布上传并触发 Actions。
 - 正式上架需要 release 签名（keystore 由开发者本人保管）、软著与开发者账号，见工作区「上架材料包」。
 
