@@ -8,8 +8,8 @@
 | 仓库 | https://github.com/laojinpassion/tizhou （公开，MIT） |
 | 本地代码 | `D:\JARVIS\jingjishi` |
 | Pages 分支 | `main` / 根目录 |
-| 当前版本 tag | `v1.1.0`（引擎修复）、`v1.2.0`（上线物料与静态页）、`v1.2.1`（PWA）、`v1.3.0`（安卓 APK） |
-| 安卓安装包 | `https://laojinpassion.github.io/tizhou/download/tizhou-1.2.1.apk`（4.5 MB，签名版） |
+| 当前版本 tag | `v1.1.0`（引擎修复）、`v1.2.0`（上线物料与静态页）、`v1.2.1`（PWA）、`v1.3.0`（安卓 APK）、`v1.4.0`（体验重构） |
+| 安卓安装包 | `https://laojinpassion.github.io/tizhou/download/tizhou-1.4.0.apk`（4.5 MB，versionCode 2，签名版） |
 | 题库规模 | 25 场考试 / 26 个科目 / 2653 题 |
 
 ## 日常发布（唯一通道）
@@ -67,7 +67,12 @@ gh api -X PATCH repos/laojinpassion/tizhou/git/refs/heads/main -f sha=<目标提
   # 产物 app/android/app/build/outputs/apk/release/app-release.apk
   cp app/build/outputs/apk/release/app-release.apk ../../download/tizhou-<版本>.apk
   ```
-- 安装包对外地址：`https://laojinpassion.github.io/tizhou/download/tizhou-<版本>.apk`，由 `install.html` 的「下载安卓版 APK」按钮引用。发布新版本时**同时改三处**：`app/android/app/build.gradle` 的 `versionName`、`download/` 下的 APK 文件名、`install.html` 里的下载链接与「版本/大小」文案。
+- 安装包对外地址：`https://laojinpassion.github.io/tizhou/download/tizhou-<版本>.apk`，由 `install.html` 的「下载安卓版 APK」按钮引用。发布新版本时**同时改五处**，漏一处就会「版本号变了但用户还在下旧包」：
+  1. `app/android/app/build.gradle` 的 `versionCode`（必须 +1，否则装不上覆盖不了）与 `versionName`
+  2. `src/app.html`「我的 → 关于题舟」里的版本号文案
+  3. `download/` 下的 APK 与 `.sha256` 文件名
+  4. `install.html` 的下载链接、版本号、大小
+  5. `README.md` 的下载链接
 - APK 里 `assets/public/` 是 `www` 的副本，**改完网页必须 `cap copy` 再打包**，否则 App 内还是老内容。
 - `.github/workflows/build-android.yml` 为云端构建流水线（本地保留，未上传）：当前 `gh` token 的 scopes 为 `repo, gist, read:org`，缺 `workflow`，通过 Git Data API / Contents API 写入 `.github/workflows/` 会返回 404。需要先执行 `gh auth refresh -h github.com -s workflow` 重新授权，之后才能随发布上传并触发 Actions。
 - 正式上架需要 release 签名（keystore 由开发者本人保管）、软著与开发者账号，见工作区「上架材料包」。

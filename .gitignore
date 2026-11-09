@@ -15,3 +15,5 @@ app/android/keystore.properties
 *.keystore
 *.jks
 download/*-debug.apk
+_qa_*.html
+_measure.html
