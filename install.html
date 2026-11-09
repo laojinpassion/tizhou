@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>把题舟装到手机 · 免注册免应用商店</title>
+<meta name="description" content="题舟 TiZhou 安装指引：添加到手机主屏幕像 App 一样打开，或下载单文件 HTML 完全离线刷题。免注册、免登录、无广告。">
+<link rel="canonical" href="https://laojinpassion.github.io/tizhou/install.html">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="theme-color" content="#2f6fb2">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"题舟需要注册或登录吗？","acceptedAnswer":{"@type":"Answer","text":"不需要。免注册、免登录、无广告，做题进度只保存在本机浏览器。"}},{"@type":"Question","name":"装到手机需要应用商店吗？","acceptedAnswer":{"@type":"Answer","text":"不需要。用手机浏览器打开网址，通过「添加到主屏幕」即可像 App 一样使用；也可以下载单文件 HTML 完全离线刷题。"}},{"@type":"Question","name":"断网后还能刷题吗？","acceptedAnswer":{"@type":"Answer","text":"在线版首次访问后由离线缓存支持；下载的离线版 HTML 保存手机后用浏览器打开，完全不需要网络。"}}]}</script>
+<style>
+:root{--bg:#f4f6f9;--card:#fff;--ink:#1c2330;--mut:#5b6678;--acc:#2563eb;--line:#e3e8ef;--ok:#2e8b57;--okbg:#ecf7f0}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:26px 18px 64px}a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{background:linear-gradient(135deg,#2f6fb2,#173d61);color:#fff;border-radius:18px;padding:28px 24px;margin-bottom:18px}
+header h1{margin:0 0 8px;font-size:26px}header p{margin:0;opacity:.9;font-size:15px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:16px}
+h2{font-size:19px;margin:0 0 10px}h3{font-size:15px;margin:16px 0 6px}
+.tag{display:inline-block;background:var(--okbg);color:var(--ok);border-radius:8px;padding:1px 9px;font-size:12px;margin-left:6px}
+.btn{display:inline-block;background:var(--acc);color:#fff;border:0;border-radius:12px;padding:13px 24px;font-size:16px;font-weight:700;cursor:pointer;margin:8px 10px 0 0}
+.btn.ghost{background:#fff;color:var(--acc);border:1.5px solid var(--acc)}
+.btn[hidden]{display:none}ol,ul{padding-left:20px}li{margin:6px 0}.mut{color:var(--mut);font-size:13.5px}
+.note{background:#eef5fc;border-left:3px solid var(--acc);padding:10px 14px;border-radius:0 10px 10px 0;margin-top:12px;font-size:14px}
+footer{margin-top:26px;color:var(--mut);font-size:13px;line-height:1.9}
+@media(max-width:600px){.wrap{padding:16px 12px 48px}header h1{font-size:21px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><h1>把题舟装到手机</h1><p>免注册 · 免应用商店 · 免登录 · 无广告 · 25 场考试 / 2653 道题</p></header>
+
+<div class="card">
+  <h2>方式一 · 添加到主屏幕 <span class="tag">推荐</span></h2>
+  <p>像普通 App 一样有图标、全屏打开，首次访问后支持离线。不需要任何账号，也不需要应用商店。</p>
+  <button class="btn" id="installBtn" hidden>一键安装到手机</button>
+  <a class="btn ghost" href="index.html">先打开题舟</a>
+  <h3>Android（Chrome / Edge / 夸克等）</h3>
+  <ol><li>用浏览器打开 <a href="index.html">题舟网页版</a>；</li><li>点右上角菜单 → 「添加到主屏幕」或「安装应用」；</li><li>桌面出现「题舟」图标，点开即全屏使用。</li></ol>
+  <h3>iPhone / iPad（Safari）</h3>
+  <ol><li>用 <b>Safari</b> 打开题舟网页版（微信内置浏览器不支持添加）；</li><li>点底部「分享」按钮 → 选择「添加到主屏幕」；</li><li>确认名称后，桌面出现图标。</li></ol>
+  <div class="note">如果上面的「一键安装」按钮出现，直接点它即可；若未出现，按上述菜单操作，效果相同。</div>
+</div>
+
+<div class="card">
+  <h2>方式二 · 下载单文件离线版 <span class="tag">完全离线</span></h2>
+  <p>整个应用就是一个 HTML 文件（约 2.1 MB），含全部 2653 道题。下载后存到手机，用浏览器打开即可刷题，<b>不需要网络、不需要安装、不需要任何账号</b>。</p>
+  <a class="btn" href="%E7%BB%8F%E6%B5%8E%E5%B8%88%E5%88%B7%E9%A2%98.html" download="题舟-离线版.html">下载离线版 HTML</a>
+  <a class="btn ghost" href="exams.html">先看考试目录</a>
+  <p class="mut" style="margin-top:12px">适合：发给别人、存网盘、无网环境、不想装任何东西。注意：离线版是独立文件，之后题库更新需要重新下载；不同文件的做题进度互不相通。</p>
+</div>
+
+<div class="card">
+  <h2>方式三 · 直接发文件 / 发链接 <span class="tag">最省事</span></h2>
+  <ul>
+    <li><b>发链接</b>：把 <code>https://laojinpassion.github.io/tizhou/</code> 发给对方，手机浏览器打开即用，零安装。</li>
+    <li><b>发文件</b>：把下载的离线版 HTML 通过微信/网盘发给对方，对方用手机浏览器打开即可，零安装。</li>
+    <li><b>搜网址</b>：搜索引擎收录需要时间；直接发链接或扫二维码比「搜名字」更快、更可靠。</li>
+  </ul>
+  <div class="note">三者的共同点：都不需要注册开发者账号、不需要软著、不需要应用商店审核。需要那些手续的只有「上架应用商店」这一条路。</div>
+</div>
+
+<div class="card">
+  <h2>使用前须知</h2>
+  <ul>
+    <li>题目为依据公开考试大纲与通用教材生成的<b>模拟题</b>，非官方真题，以当年官方教材为准。</li>
+    <li>做题进度只保存在当前浏览器 / 当前文件，清缓存、换设备或换文件会丢失。</li>
+    <li>不收集、不上传任何个人信息；无账号、无广告、无付费。</li>
+    <li>发现答案有误，可到 <a href="https://github.com/laojinpassion/tizhou/issues/new/choose" target="_blank">GitHub 提交纠错</a>。</li>
+  </ul>
+</div>
+
+<footer>题舟 TiZhou · 开源 MIT · <a href="index.html">打开应用</a> · <a href="exams.html">考试目录</a> · <a href="https://github.com/laojinpassion/tizhou" target="_blank">GitHub</a><br>本项目与任何官方机构、出版社无关。</footer>
+</div>
+<script>
+(function(){
+  var deferred=null, btn=document.getElementById('installBtn');
+  window.addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); deferred=e; if(btn) btn.hidden=false; });
+  if(btn) btn.addEventListener('click',function(){
+    if(!deferred) return;
+    deferred.prompt();
+    deferred.userChoice.then(function(){ deferred=null; btn.hidden=true; });
+  });
+  if(window.navigator&&navigator.serviceWorker&&typeof navigator.serviceWorker.register==='function'){
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  }
+})();
+</script>
+</body>
+</html>

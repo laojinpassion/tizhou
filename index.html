@@ -4,6 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#2f6fb2">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="题舟">
 <meta name="description" content="题舟 TiZhou：25 场考试免费在线刷题，覆盖驾考、经济师、会计、建造、教师、法考等；含章节练习、错题本与全真模考，免登录，进度保存在本机。">
 <meta property="og:type" content="website">
 <meta property="og:title" content="题舟 TiZhou · 通用刷题引擎">
@@ -694,7 +699,7 @@ function renderHome(){
   <div id="sres"></div>
   ${catHTML}
   <div class="footer-note">
-    ${typeof location!=='undefined'&&/^https?:/.test(location.protocol)?`<a href="exams.html" style="color:var(--acc)">📚 考试目录与题库说明（${totalQ} 题）</a> · `:''}目录持续扩充：新数据包上线后自动出现在对应类目。想催更某个考试，到
+    ${typeof location!=='undefined'&&/^https?:/.test(location.protocol)?`<a href="exams.html" style="color:var(--acc)">📚 考试目录（${totalQ} 题）</a> · <a href="install.html" style="color:var(--acc)">📲 安装到手机 / 离线版</a> · `:''}目录持续扩充：新数据包上线后自动出现在对应类目。想催更某个考试，到
     <a href="https://github.com/laojinpassion/tizhou" target="_blank" style="color:var(--acc)">GitHub 项目页</a> 提 issue，或按 README 自己做数据包（引擎零改动）。
   </div>
   ${tabbarHTML('home')}`;
@@ -1171,7 +1176,10 @@ window.showMockWrong=function(){
 };
 
 /* 启动 */
-renderHome();
+// 支持 PWA 桌面快捷方式：index.html?screen=mockSelect|wrong|settings
+let startScreen='home';
+try{ const p=new URLSearchParams(window.location.search).get('screen'); if(['mockSelect','wrong','settings'].includes(p)) startScreen=p; }catch(e){}
+if(startScreen==='home') renderHome(); else nav(startScreen);
 setTimeout(()=>{ const sp=document.getElementById('splash'); if(sp) sp.classList.add('hide'); }, 300);
 /* 可访问性：为所有 onclick 卡片补语义与键盘可达 */
 function enhanceA11y(){
@@ -1192,6 +1200,10 @@ if(typeof MutationObserver==='function'){
   if(appEl) new MutationObserver(enhanceA11y).observe(appEl,{childList:true,subtree:true});
 }
 enhanceA11y();
+// PWA：注册离线缓存（仅浏览器环境；本地单文件打开时自动跳过）
+if(typeof navigator!=='undefined'&&navigator.serviceWorker&&typeof window!=='undefined'&&typeof window.addEventListener==='function'){
+  window.addEventListener('load',function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
+}
 </script>
 </body>
 </html>

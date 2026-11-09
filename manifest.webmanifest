@@ -1,0 +1,24 @@
+{
+  "id": "./",
+  "name": "题舟 TiZhou · 免费刷题",
+  "short_name": "题舟",
+  "description": "25 场考试、2653 道免费模拟题。章节练习、错题本、全真模考，免登录，进度保存在本机。",
+  "lang": "zh-CN",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f4f6f9",
+  "theme_color": "#2f6fb2",
+  "categories": ["education", "productivity", "utilities"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "全真模考", "short_name": "模考", "url": "./index.html?screen=mockSelect", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "错题本", "short_name": "错题", "url": "./index.html?screen=wrong", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}
