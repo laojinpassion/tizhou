@@ -8,15 +8,15 @@
 | 仓库 | https://github.com/laojinpassion/tizhou （公开，MIT） |
 | 本地代码 | `D:\JARVIS\jingjishi` |
 | Pages 分支 | `main` / 根目录 |
-| 当前版本 tag | `v1.1.0`（引擎修复）、`v1.2.0`（上线物料与静态页）、`v1.2.1`（PWA）、`v1.3.0`（安卓 APK）、`v1.4.0`（体验重构）、`v1.5.0`（备份/续做/纠错） |
-| 安卓安装包 | `https://laojinpassion.github.io/tizhou/download/tizhou-1.5.0.apk`（4.6 MB，versionCode 3，签名版） |
+| 当前版本 tag | `v1.1.0`（引擎修复）、`v1.2.0`（上线物料与静态页）、`v1.2.1`（PWA）、`v1.3.0`（安卓 APK）、`v1.4.0`（体验重构）、`v1.5.0`（备份/续做/纠错）、`v1.6.0`（复习清单/考点组卷） |
+| 安卓安装包 | `https://laojinpassion.github.io/tizhou/download/tizhou-1.6.0.apk`（4.7 MB，versionCode 4，签名版） |
 | 题库规模 | 25 场考试 / 26 个科目 / 2653 题 |
 
 ## 日常发布（唯一通道）
 
 ```bash
 cd /d/JARVIS/jingjishi
-node build.mjs      # 题库校验 + 572 项冒烟门禁 + 生成 index.html / 静态页 / sitemap
+node build.mjs      # 题库校验 + 582 项冒烟门禁 + 生成 index.html / 静态页 / sitemap
 git add -A
 node publish-api.mjs laojinpassion tizhou main "提交说明"
 ```
@@ -40,7 +40,7 @@ gh api -X PATCH repos/laojinpassion/tizhou/git/refs/heads/main -f sha=<目标提
 
 ## 校验与门禁
 
-- `node smoke.mjs`：572 项渲染层冒烟（25 场考试的章节定位、组卷、答题、交卷、错题本、状态重置、跨考试断点）。
+- `node smoke.mjs`：582 项渲染层冒烟（25 场考试的章节定位、组卷、答题、交卷、错题本、状态重置、跨考试断点、续做、备份、纠错、复习清单、考点组卷）。
 - `node build.mjs`：自动调用冒烟，任一失败即退出且不发布。
 - 修改前备份：`D:/巴蒂工作区/2026-11-08-15-59-21/backup-20261108/`。
 

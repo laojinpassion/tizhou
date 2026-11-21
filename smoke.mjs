@@ -50,6 +50,9 @@ return {
   startMock:window.startMock,finishMock,resumeMock:window.resumeMock,openExam:window.openExam,startChapter:window.startChapter,wipe:window.wipe,
   pick:window.pick,nextQ:window.nextQ,prevQ:window.prevQ,
   resumeLast:window.resumeLast,backupText,reportText,openReport:window.openReport,closeReport:window.closeReport,
+  wrongReviewText,exportWrongList:window.exportWrongList,
+  renderPointSelect,collectPoints,buildPointQuizIds,togglePoint:window.togglePoint,setPointN:window.setPointN,
+  startPointQuiz:window.startPointQuiz,getPointList:()=>POINT_LIST,getPointSel:()=>POINTSEL,
   chapters,getS:()=>S,getEX:()=>EX,getMK:()=>MK,getSES:()=>SES,getSUBJECTS:()=>SUBJECTS,EXAMS
 };`)();
 
@@ -189,11 +192,50 @@ return {
     assert(n1 === 1, `首次应记录 1 条，实际 ${n1}`);
     assert(n2 === 1, `同题不应重复记录，实际 ${n2}`);
   });
+  ok('错题复习清单包含题目要素', () => {
+    api.openExam(0);
+    const s = api.EXAMS[0].subjects[0];
+    const qs = DATA.banks[s.key];
+    assert(qs.length >= 2, '首科题量不足，无法测试复习清单');
+    const S = api.getS();
+    S.wrong = { [`${s.key}:0`]: '2026-01-01', [`${s.key}:1`]: '2026-01-02' };
+    const txt = api.wrongReviewText();
+    assert(txt.includes('# 题舟错题复习清单'), '缺少清单标题');
+    assert(txt.includes(`${s.key}:0`) && txt.includes(`${s.key}:1`), '缺少题目 ID');
+    assert(txt.includes(qs[0].q.slice(0, 12)), '缺少题干');
+    assert(txt.includes('正确答案'), '缺少正确答案');
+    assert(txt.includes('解析'), '缺少解析');
+  });
+  ok('按考点组卷：只抽所选考点', () => {
+    api.openExam(0);                       // 切换考试会清空已选考点
+    api.renderPointSelect();
+    const pts = api.getPointList();
+    assert(pts.length >= 2, '当前考试可用考点不足 2 个');
+    api.togglePoint(0); api.togglePoint(1);
+    const keys = [pts[0].key, pts[1].key];
+    const allowed = new Set();
+    api.getPointList().filter(p => keys.includes(p.key)).forEach(p => p.qs.forEach(q => allowed.add(q.id)));
+    const ids = api.buildPointQuizIds();
+    assert(ids.length > 0 && ids.length <= 20, `抽题数异常：${ids.length}`);
+    assert(ids.every(id => allowed.has(id)), '混入未选考点的题目');
+    assert(ids.length === new Set(ids).size, '同一题被重复组入');
+  });
+  ok('按考点组卷页面与启动', () => {
+    api.setPointN(10);
+    api.renderPointSelect();
+    assert(appEl.innerHTML.includes('按考点组卷'), '组卷页未正确渲染');
+    api.startPointQuiz();
+    const ses = api.getSES();
+    assert(ses && ses.qs.length > 0, '组卷后无题目');
+    assert(ses.title.includes('考点组卷'), '组卷标题不正确');
+    assert(ses.qs.length <= 10, '未遵守本次抽题数');
+  });
   ok('清空数据后备份仍可生成', () => {
     api.wipe();
     const o = JSON.parse(api.backupText());
     assert(o.state.last === null, '清空后 last 应为 null');
     assert(o.state.reports.length === 0, '清空后 reports 应为空');
+    assert(api.wrongReviewText() === '', '清空后复习清单应为空');
   });
 
   return { ok: failures.length === 0, checks, failures };

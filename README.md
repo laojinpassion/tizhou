@@ -6,7 +6,7 @@
 
 **在线使用**：<https://laojinpassion.github.io/tizhou/>
 
-**安卓 App**：[下载 APK](https://laojinpassion.github.io/tizhou/download/tizhou-1.5.0.apk)（4.6 MB，Android 7.0+，免应用商店、免注册）· [安装指引](https://laojinpassion.github.io/tizhou/install.html)
+**安卓 App**：[下载 APK](https://laojinpassion.github.io/tizhou/download/tizhou-1.6.0.apk)（4.7 MB，Android 7.0+，免应用商店、免注册）· [安装指引](https://laojinpassion.github.io/tizhou/install.html)
 **iPhone**：Safari 打开在线地址 → 分享 → 添加到主屏幕
 
 ## 已内置数据包（25 场考试 · 2653 题 · 全部可刷）
@@ -28,7 +28,11 @@
 ## 功能
 
 - **两种揭晓模式**：批量揭晓（5 题一组做完统一判分，检索练习效果更好）/ 即时揭晓（做一题看一题）
-- **错题本**：自动收集，重做全对自动移出，记录日期
+- **错题本**：自动收集，重做全对自动移出，记录日期；可导出 Markdown 复习清单（含选项、答案与解析）
+- **按考点组卷**：跨章节勾选多个考点混合抽题，支持 10/20/30/50 题规模与「错题 / 未做题优先」
+- **继续上次练习**：自动记录位置与作答，首页一键回到原题
+- **备份与恢复**：安卓端调起系统分享，浏览器端下载 JSON，换设备可完整还原
+- **站内纠错**：题目/答案有误可一键生成报告并发给作者
 - **全真模考**：按数据包配置的题型结构组卷、计时、到时自动交卷、断点续考、成绩历史
 - **理解配图**：27 张内嵌 SVG 示意图（成本曲线、波士顿矩阵、供求图等），自动挂接到相关题目
 - **章节统计**：每章进度与正确率、总正确率、考试倒计时

@@ -215,6 +215,29 @@ body{background:var(--bg)}
 .resume-card .rc-s{font-size:12.5px;color:var(--mut);margin-top:2px}
 .report-link{display:block;width:100%;margin-top:12px;padding:8px 0 0;border:0;border-top:1px dashed var(--line);background:none;color:var(--mut);font-size:12.5px;text-align:center;cursor:pointer}
 .report-link:hover{color:var(--acc)}
+/* ================= v6 复习清单 / 考点组卷 ================= */
+.export-note{font-size:12.5px;color:var(--mut);text-align:center;margin-top:8px;line-height:1.7}
+.ptoolbar{display:flex;align-items:center;gap:10px;margin:10px 0 14px}
+.ptoolbar .pl{flex:1;min-width:0}
+.ptoolbar .k{font-size:12px;color:var(--mut)}
+.ptoolbar .v{font-weight:800;font-size:15.5px;margin-top:1px}
+.nbtn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 10px;font-size:13px;font-weight:700;color:var(--mut);cursor:pointer}
+.nbtn.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.pthead{display:flex;align-items:center;gap:8px;margin:16px 2px 8px}
+.pthead .nm{font-size:14.5px;font-weight:800;flex:1}
+.pthead .op{font-size:12.5px;color:var(--acc);cursor:pointer;font-weight:700;border:0;background:none;padding:4px}
+.ptgrid{display:flex;flex-wrap:wrap;gap:8px}
+.ptag{border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:9px 11px;font-size:13.5px;color:var(--ink);cursor:pointer;display:flex;align-items:center;gap:7px;max-width:100%;text-align:left}
+.ptag .tn{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ptag .cn{font-size:11.5px;color:var(--mut);background:#eef2f8;border-radius:8px;padding:1px 6px;flex:none}
+.ptag.on{border-color:var(--acc);background:var(--accbg);color:var(--brand)}
+.ptag.on .cn{background:#dbe8ff;color:var(--brand)}
+.pointbar{position:fixed;left:0;right:0;bottom:0;z-index:40;background:rgba(255,255,255,.97);box-shadow:0 -6px 22px rgba(16,32,64,.10);padding:10px 14px calc(10px + env(safe-area-inset-bottom))}
+.pointbar .in{max-width:600px;margin:0 auto;display:flex;align-items:center;gap:10px}
+.pointbar .sum{flex:1;min-width:0;font-size:13px;color:var(--mut);line-height:1.5}
+.pointbar .sum b{font-size:16px;color:var(--ink)}
+.pointbar .btn{flex:0 0 40%;width:auto;margin-top:0}
+#app.pointpage{padding-bottom:118px}
 </style>
 </head>
 <body>
@@ -570,8 +593,11 @@ const EXAMS=DATA.exams.length?DATA.exams:[{id:'default',name:'题舟',subjects:[
 let EXIDX=0, EX=EXAMS[0];
 const SUBJ_META={}; EXAMS.forEach(e=>(e.subjects||[]).forEach(s=>{ SUBJ_META[s.key]={name:s.name,short:s.short||s.name}; }));
 const SUBJECTS={};
+/* 考点组卷的临时选择（切换考试时清空，不写入备份状态） */
+var POINTSEL=new Set(), POINTN=20, POINTWEAK=true, POINT_LIST=[];
 function initSubjects(){
   Object.keys(SUBJECTS).forEach(k=>delete SUBJECTS[k]);
+  POINTSEL.clear();
   (EX.subjects||[]).forEach(s=>{ SUBJECTS[s.key]={name:s.name,short:s.short||s.name,tag:s.tag||'',icon:s.icon||'📘',qs:[]}; });
   // 为全部科目建立稳定 id（科目内序号），不随当前考试切换而变化
   Object.keys(DATA.banks||{}).forEach(k=>{
@@ -764,8 +790,8 @@ let CUR_SCR='home';
 function nav(screen,arg){
   CUR_SCR=screen;
   const el=$('#app');
-  if(el) el.className = (screen==='quiz'||screen==='mockRun')?'quizpage':'';
-  ({home:renderHome,exam:renderExam,subject:renderSubject,quiz:renderQuiz,wrong:renderWrong,settings:renderSettings,mockSelect:renderMockSelect,mockRun:renderMockRun})[screen](arg);
+  if(el) el.className = (screen==='quiz'||screen==='mockRun')?'quizpage':(screen==='pointSelect'?'pointpage':'');
+  ({home:renderHome,exam:renderExam,subject:renderSubject,quiz:renderQuiz,wrong:renderWrong,settings:renderSettings,mockSelect:renderMockSelect,mockRun:renderMockRun,pointSelect:renderPointSelect})[screen](arg);
 }
 
 function renderHome(){
@@ -911,6 +937,10 @@ function renderExam(){
     <div class="h2">🔴 错题本 <span class="badge b-multi">${wrongN}</span></div>
     <div class="mut">做错的题自动收进来，重做全对才会移出</div>
   </div>
+  <div class="card subject-card" onclick="nav('pointSelect')">
+    <div class="h2">🎯 按考点组卷</div>
+    <div class="mut">勾选多个考点混合抽题 · 错题和未做题优先</div>
+  </div>
   ${S.mockLive?`<div class="card subject-card" onclick="resumeMock()">
     <div class="h2">⏯ 继续模考</div>
     <div class="mut">上次模考未完成，点击恢复（剩余时间自动计算）</div>
@@ -960,6 +990,99 @@ window.startChapter=(skey,ci)=>{
   startSession(ch.qs.map(q=>q.id),{title:(ch.p==='案例分析'?'':'第'+ch.c+'章 ')+ch.cn});
 };
 window.startAll=skey=>{ startSession(shuffle(SUBJECTS[skey].qs.map(q=>q.id)),{title:SUBJECTS[skey].name+' · 乱序',source:skey}); };
+
+/* ============ 按考点组卷 ============ */
+function collectPoints(){
+  const out=[];
+  (EX.subjects||[]).forEach(s=>{
+    const map=new Map();
+    (DATA.banks[s.key]||[]).forEach(q=>{
+      const tag=String(q.k||'').trim();
+      if(!tag) return;
+      const key=s.key+'|'+tag;
+      if(!map.has(key)) map.set(key,{key,tag,subject:s.key,subjectName:s.name||s.short||s.key,qs:[]});
+      map.get(key).qs.push(q);
+    });
+    out.push(...[...map.values()].sort((a,b)=>a.tag.localeCompare(b.tag,'zh-CN')));
+  });
+  return out;
+}
+function buildPointQuizIds(){
+  const byId=new Map();
+  POINTSEL.forEach(key=>{
+    const p=POINT_LIST.find(x=>x.key===key);
+    if(!p)return;
+    p.qs.forEach(q=>{ if(!byId.has(q.id)) byId.set(q.id,q); });
+  });
+  let ids=[...byId.keys()];
+  if(POINTWEAK){
+    const rank=id=>{
+      if(S.wrong[id]) return 0;
+      const st=S.stats[id];
+      return (st&&st.a)?2:1;
+    };
+    const arr=ids.map(id=>({id,r:rank(id),seed:Math.random()}));
+    arr.sort((a,b)=>a.r-b.r||a.seed-b.seed);
+    ids=arr.map(x=>x.id);
+  }else ids=shuffle(ids);
+  return ids.slice(0,POINTN);
+}
+function renderPointSelect(){
+  POINT_LIST=collectPoints();
+  const valid=new Set(POINT_LIST.map(p=>p.key));
+  [...POINTSEL].forEach(k=>{ if(!valid.has(k)) POINTSEL.delete(k); });
+  const chosen=POINT_LIST.filter(p=>POINTSEL.has(p.key));
+  const avail=chosen.reduce((n,p)=>n+p.qs.length,0);
+  const nums=[10,20,30,50].map(n=>`<button class="nbtn ${POINTN===n?'on':''}" onclick="setPointN(${n})">${n}</button>`).join('');
+  let listHTML='';
+  let lastSub=null;
+  POINT_LIST.forEach((p,i)=>{
+    if(p.subject!==lastSub){
+      if(lastSub!==null) listHTML+='</div>';
+      lastSub=p.subject;
+      const si=EX.subjects.findIndex(s=>s.key===p.subject), sub=EX.subjects[si]||{};
+      listHTML+=`<div class="pthead"><div class="nm">${esc(sub.icon||'📘')} ${esc(sub.name||p.subjectName)}</div><button class="op" onclick="toggleSubjectPoints(${si},true)">全选</button><button class="op" onclick="toggleSubjectPoints(${si},false)">清空</button></div><div class="ptgrid">`;
+    }
+    listHTML+=`<button class="ptag ${POINTSEL.has(p.key)?'on':''}" onclick="togglePoint(${i})" aria-pressed="${POINTSEL.has(p.key)}"><span class="tn">${esc(p.tag)}</span><span class="cn">${p.qs.length}</span></button>`;
+  });
+  if(lastSub!==null) listHTML+='</div>';
+  if(!POINT_LIST.length) listHTML='<div class="card"><div class="emptystate"><div class="ei">🏷️</div>当前考试的数据包还没有标注考点<br><span class="small">可先用章节练习，后续数据包补充考点后自动出现</span></div></div>';
+  $('#app').innerHTML=`
+  <div class="topbar"><button class="back" onclick="nav('exam')">‹ 返回</button><div class="title">按考点组卷</div><div class="sp"></div></div>
+  <div class="card">
+    <div class="h2">🎯 混合练习</div>
+    <div class="small" style="line-height:1.8">从当前考试的题库里按考点抽题。勾选多个考点后，一次练习会混在一起，适合冲刺阶段查漏补缺。</div>
+  </div>
+  <div class="card">
+    <div class="pttoolbar"><div class="pl"><div class="k">本次抽题数</div><div class="v">${POINTN} 题</div></div>${nums}</div>
+    <button class="nbtn ${POINTWEAK?'on':''}" onclick="togglePointWeak()">${POINTWEAK?'✓ ':'○ '}错题 / 未做题优先</button>
+    <div class="small" style="margin-top:8px">所选考点的题量不足时，按实际题量出卷。</div>
+  </div>
+  ${listHTML}
+  <div class="pointbar"><div class="in">
+    <div class="sum">已选 <b>${chosen.length}</b> 个考点 · 可用 <b>${avail}</b> 题<br><span class="small">${POINTWEAK?'优先抽错题和未做题':'完全随机抽题'}</span></div>
+    <button class="btn" ${chosen.length?'':'disabled'} onclick="startPointQuiz()">开始组卷</button>
+  </div></div>`;
+}
+window.togglePoint=function(i){
+  const p=POINT_LIST[i]; if(!p)return;
+  if(POINTSEL.has(p.key)) POINTSEL.delete(p.key); else POINTSEL.add(p.key);
+  renderPointSelect();
+};
+window.toggleSubjectPoints=function(si,on){
+  const s=EX.subjects[si]; if(!s)return;
+  POINT_LIST.filter(p=>p.subject===s.key).forEach(p=>{ if(on)POINTSEL.add(p.key); else POINTSEL.delete(p.key); });
+  renderPointSelect();
+};
+window.setPointN=function(n){ POINTN=[10,20,30,50].includes(+n)?+n:20; renderPointSelect(); };
+window.togglePointWeak=function(){ POINTWEAK=!POINTWEAK; renderPointSelect(); };
+window.startPointQuiz=function(){
+  const ids=buildPointQuizIds();
+  if(!ids.length){ toast('所选考点暂无可练习题'); return; }
+  const tags=[...POINTSEL].map(k=>k.split('|').slice(1).join('|'));
+  startSession(ids,{title:'考点组卷 · '+POINTSEL.size+' 个考点',source:'point:'+tags.join(',')});
+  if(ids.length<POINTN) toast('所选考点只有 '+ids.length+' 题，已全部组入');
+};
 
 function renderQuiz(){
   const {qs,idx}=SES;
@@ -1125,7 +1248,9 @@ function renderWrong(){
   }
   $('#app').innerHTML=`
   <div class="topbar"><button class="back" onclick="nav('exam')">‹ 返回</button><div class="title">错题本</div><div class="sp"></div></div>
-  ${ids.length?`<button class="btn" onclick="redoWrong()">🔁 错题重做（${ids.length} 题，乱序）</button><div class="small" style="text-align:center;margin-top:6px">重做全对会自动移出错题本</div>`:''}
+  ${ids.length?`<button class="btn" onclick="redoWrong()">🔁 错题重做（${ids.length} 题，乱序）</button>
+  <button class="btn ghost" onclick="exportWrongList()">📄 导出复习清单</button>
+  <div class="export-note">导出为 Markdown 文件，含题干、选项、正确答案和解析；手机上可直接分享到微信 / 网盘。</div>`:''}
   ${html}
   ${tabbarHTML('wrong')}`;
 }
@@ -1179,7 +1304,7 @@ function renderSettings(){
   <div class="card">
     <div class="h2">ℹ 关于题舟</div>
     <div class="small" style="line-height:1.8">
-      题舟 TiZhou · 通用刷题引擎 <b>v1.5.0</b>（开源 MIT）<br>
+      题舟 TiZhou · 通用刷题引擎 <b>v1.6.0</b>（开源 MIT）<br>
       题库为按考试大纲生成的<b>模拟题</b>，非官方真题，以当年官方教材与考纲为准。<br>
       做题进度只存在本机，清除应用数据、卸载或更换设备会丢失；建议定期截图留存重要成绩。<br>
       发现答案有误或想加新考试：<a href="https://github.com/laojinpassion/tizhou/issues/new/choose" target="_blank" rel="noopener" style="color:var(--acc)">提交 Issue（题目纠错模板）</a> · <a href="https://github.com/laojinpassion/tizhou" target="_blank" rel="noopener" style="color:var(--acc)">GitHub 项目页</a>
@@ -1205,17 +1330,17 @@ function backupText(){
 function capPlugin(n){
   return (typeof window!=='undefined'&&window.Capacitor&&window.Capacitor.Plugins)?window.Capacitor.Plugins[n]:null;
 }
-window.doExport=async function(){
-  const text=backupText(), name=backupName();
+/* 统一的「文件交付」：安卓端走系统分享，浏览器端下载，失败不谎报成功 */
+async function deliverFile(text,name,title,mime,okMsg,failMsg){
   const CAP=window.Capacitor;
   const isNative=!!(CAP&&typeof CAP.isNativePlatform==='function'&&CAP.isNativePlatform());
-  const FS=capPlugin('Filesystem'), SH=capPlugin('Share');
   if(isNative){
-    if(!FS||!SH){ toast('当前版本缺少导出组件，请到「我的」升级到最新版'); return; }
+    const FS=capPlugin('Filesystem'), SH=capPlugin('Share');
+    if(!FS||!SH){ toast('当前版本缺少导出组件，请升级到最新版'); return; }
     try{
       const data=btoa(unescape(encodeURIComponent(text)));
       const w=await FS.writeFile({path:name,data,directory:'CACHE'});
-      await SH.share({title:'题舟 进度备份',url:w.uri,dialogTitle:'发送或保存备份文件'});
+      await SH.share({title,url:w.uri,dialogTitle:'发送或保存文件'});
     }catch(e){
       // 用户在分享面板点「取消」也会走到这里，不能谎报成功
       const m=String(e&&e.message||e||'');
@@ -1224,16 +1349,66 @@ window.doExport=async function(){
     return;
   }
   try{
-    const blob=new Blob([text],{type:'application/json'});
+    const blob=new Blob([text],{type:mime});
     const url=URL.createObjectURL(blob);
     const a=document.createElement('a');
     a.href=url; a.download=name;
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(()=>URL.revokeObjectURL(url),4000);
-    toast('备份文件已下载：'+name);
-  }catch(e){
-    toast('当前环境不支持下载，请用手机版「导出备份」');
-  }
+    toast(okMsg);
+  }catch(e){ toast(failMsg); }
+}
+window.doExport=function(){
+  const name=backupName();
+  return deliverFile(backupText(),name,'题舟 进度备份','application/json',
+    '备份文件已下载：'+name,'当前环境不支持下载，请用手机版「导出备份」');
+};
+/* ============ 错题复习清单 ============ */
+function reviewName(){
+  const d=new Date(), p=n=>String(n).padStart(2,'0');
+  return `tizhou-review-${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}.md`;
+}
+function wrongReviewText(){
+  const ids=Object.keys(S.wrong).filter(id=>findQ(id));
+  if(!ids.length) return '';
+  const groups=new Map();
+  ids.forEach(id=>{
+    const q=findQ(id);
+    const exam=EXAMS.find(e=>(e.subjects||[]).some(s=>s.key===q.s));
+    const examName=exam?exam.name:'其他考试';
+    const subName=(SUBJ_META[q.s]||{}).name||q.s;
+    const chName=(q.p?String(q.p)+' · ':'')+(q.c||'')+(q.cn?' '+q.cn:'');
+    const gk=examName+'\n'+subName+'\n'+chName;
+    if(!groups.has(gk)) groups.set(gk,[]);
+    groups.get(gk).push(q);
+  });
+  const L=['A','B','C','D','E'];
+  const lines=['# 题舟错题复习清单','',`导出时间：${new Date().toLocaleString('zh-CN')}`,`错题数量：${ids.length}`,'','> 使用方法：先遮住「正确答案 / 解析」自测，再看答案；连续做对两次后可移出错题本。',''];
+  let n=0;
+  groups.forEach((qs,gk)=>{
+    const [examName,subName,chName]=gk.split('\n');
+    lines.push('## '+(++n)+'. '+examName+' · '+subName+' · '+chName,'');
+    qs.forEach(q=>{
+      lines.push('- 做错日期：'+(S.wrong[q.id]||'—'));
+      lines.push('- 题目 ID：`'+q.id+'`');
+      lines.push('- 考点：'+(q.k||'未标注'));
+      lines.push('- 题型：'+(q.bg?'案例分析':(q.t==='multi'?'多选':'单选')));
+      lines.push('- 题干：'+q.q);
+      if(q.bg) lines.push('- 背景：'+q.bg);
+      lines.push('- 选项：');
+      q.o.forEach((o,i)=>lines.push('  - '+L[i]+'. '+o));
+      lines.push('- 正确答案：**'+q.a.map(i=>L[i]).join('、')+'**');
+      lines.push('- 解析：'+(q.e||'—'),'');
+    });
+  });
+  return lines.join('\n');
+}
+window.exportWrongList=function(){
+  const text=wrongReviewText();
+  if(!text){ toast('错题本是空的，先去刷几题'); return; }
+  const name=reviewName();
+  return deliverFile(text,name,'题舟 错题复习清单','text/markdown;charset=utf-8',
+    '复习清单已下载：'+name,'当前环境不支持下载，请用手机版导出');
 };
 window.pickImport=function(){
   const el=document.getElementById('impFile');
@@ -1532,11 +1707,11 @@ window.showMockWrong=function(){
 
 /* 启动 */
 // 深链接：PWA 桌面快捷方式、商店截图演示、静态页跳转
-// ?screen=mockSelect|wrong|settings | ?screen=subject&s=<key> | ?screen=quiz&s=<key>
+// ?screen=mockSelect|wrong|settings|pointSelect | ?screen=subject&s=<key> | ?screen=quiz&s=<key>
 let startScreen='home';
 try{
   const u=new URLSearchParams(window.location.search), sc=u.get('screen'), s=u.get('s');
-  if(['mockSelect','wrong','settings'].includes(sc)) startScreen=sc;
+  if(['mockSelect','wrong','settings','pointSelect'].includes(sc)) startScreen=sc;
   else if((sc==='subject'||sc==='quiz')&&s){
     if(!SUBJECTS[s]){
       const ei=EXAMS.findIndex(e=>(e.subjects||[]).some(x=>x.key===s));
