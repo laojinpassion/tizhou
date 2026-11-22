@@ -6,7 +6,7 @@
 
 **在线使用**：<https://laojinpassion.github.io/tizhou/>（国内直连快线：<https://jintianchisha-d2gnjxiwla779b6b1-1422025775.tcloudbaseapp.com/tizhou/>）
 
-**安卓 App**：[下载 APK](https://laojinpassion.github.io/tizhou/download/tizhou-1.6.0.apk)（4.7 MB，Android 7.0+，免应用商店、免注册）· [安装指引](https://laojinpassion.github.io/tizhou/install.html)
+**安卓 App**：[下载 APK](https://laojinpassion.github.io/tizhou/download/tizhou-1.7.0.apk)（4.7 MB，Android 7.0+，免应用商店、免注册）· [安装指引](https://laojinpassion.github.io/tizhou/install.html)
 **iPhone**：Safari 打开在线地址 → 分享 → 添加到主屏幕
 
 ## 已内置数据包（25 场考试 · 2753 题 · 全部可刷）
